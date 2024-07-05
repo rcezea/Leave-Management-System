@@ -1,0 +1,34 @@
+Leave-Management-System/
+│
+├── app.py                   # Main application entry point
+│
+├── authentication/          # Authentication module
+│   ├── __init__.py
+│   ├── auth.py              # Authentication functions
+│   └── forms.py             # Forms for login, registration, etc.
+│
+├── models/                  # Models module
+│   ├── __init__.py
+│   ├── db.py                # Database setup
+│   ├── user.py              # User model and related functions
+│   └── leave.py             # Leave application model and functions
+│
+├── static/                  # Static assets (CSS, JavaScript)
+│   ├── css/
+│   ├── js/
+│   └── img/
+│
+├── templates/               # HTML templates
+│   ├── admin/               # Admin views
+│   ├── user/                # User dashboard views
+│   ├── leave/               # Leave processing views
+│   └── auth/                # Authentication views (login, register)
+│
+├── views/                   # Views module
+│   ├── __init__.py
+│   ├── admin_views.py       # Admin dashboard views
+│   ├── user_views.py        # User dashboard views
+│   ├── leave_views.py       # Leave application processing views
+│   └── error_handlers.py    # Error handling views
+│
+└── error.log                # Error log file (if applicable)
