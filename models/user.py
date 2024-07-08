@@ -34,7 +34,7 @@ class Leave(mongoengine.Document):
     end = mongoengine.DateField(required=True)
     type = mongoengine.StringField(required=True)
     reason = mongoengine.StringField(required=True)
-    status = mongoengine.BooleanField(required=True)
+    status = mongoengine.BooleanField(required=True, default=False)
 
     meta = {
         'db_alias': 'core',

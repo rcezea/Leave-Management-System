@@ -15,18 +15,26 @@ class LeaveManager:
         self._db = DB()
 
     def create_leave_application(self, email, **kwargs):
-        leave = self._db.create_leave_application(email, kwargs=kwargs)
-        return leave
+        try:
+            leave = self._db.create_leave_application(email, kwargs=kwargs)
+            return leave
+        except Exception as e:
+            raise e
 
     def get_all_applications_by_user(self, id):
-        return self._db.all_by_user(id)
+        try:
+            return self._db.all_by_user(id)
+        except Exception as e:
+            raise e
 
     def delete_leave_id(self, user, leave_id):
-        leave = self._db.find_leave_by(user, leave_id=leave_id)
-        if leave and leave.status is False:
+        try:
             if self._db.delete_application(user.email, leave_id=leave_id):
                 return True
-        return False
+        except ValueError as e:
+            raise ValueError(e)
+        except Exception as e:
+            raise Exception("An unexpected error occurred while deleting leave application.")
 
     def admin_get_all_applications(self):
         return self._db.all()
@@ -47,4 +55,9 @@ class LeaveManager:
 
     def get_leave_balance(self, user_id):
         """ Retrieve remaining leave balance for a user """
-        return self._db.leave_balance(user_id)
+        try:
+            return self._db.leave_balance(user_id)
+        except ValueError as e:
+            raise ValueError(e)
+        except Exception as e:
+            raise Exception("Failed to retrieve leave balance: " + str(e))

@@ -22,18 +22,16 @@ def apply():
     if session_id:
         user = auth.get_user_from_session_id(session_id)
         if user:
-            start = request.form.get("start")
-            end = request.form.get("end")
-            type = request.form.get("type")
-            reason = request.form.get("reason")
-            leave = manager.create_leave_application(user.email,
-                                                     start=start,
-                                                     end=end,
-                                                     type=type,
-                                                     reason=reason,
-                                                     status=False)
-            if leave:
-                return jsonify({"message": "Application submitted successfuly"}), 201
+            form_data = request.form
+            kwargs = {key: form_data[key] for key in form_data}
+            kwargs.update(userid=user.id)
+            try:
+                leave = manager.create_leave_application(user.email,
+                                                         **kwargs)
+                if leave:
+                    return jsonify({"message": "Application submitted successfuly"}), 201
+            except Exception as e:
+                return jsonify({"error": str(e)}), 400
     abort(401)
 
 
@@ -48,16 +46,19 @@ def convert_dates(application):
 # View Leave Status
 # Endpoint: GET /leave/status
 # Description: View the status of all leave applications submitted by the user.
-@app_views.route('/leave/status/', methods=["GET"], strict_slashes=False)
+@app_views.route('/leave/status', methods=["GET"], strict_slashes=False)
 def status():
     """ View leave application status """
     session_id = request.cookies.get("session_id")
     if session_id:
         user = auth.get_user_from_session_id(session_id)
         if user:
-            applications = manager.get_all_applications_by_user(user.id)
-            applications_list = [convert_dates(app) for app in applications]
-            return jsonify({"leave_applications": applications_list})
+            try:
+                applications = manager.get_all_applications_by_user(user.id)
+                applications_list = [convert_dates(app) for app in applications]
+                return jsonify({"leave_applications": applications_list})
+            except Exception as e:
+                return jsonify({"error": str(e)}), 400
     abort(401)
 
 
@@ -71,9 +72,13 @@ def cancel_leave(leave_id):
     if session_id:
         user = auth.get_user_from_session_id(session_id)
         if user:
-            if manager.delete_leave_id(user, leave_id):
-                return jsonify({"message": "Application deleted successfully"}), 200
-            return jsonify({"error": "Cannot delete approved / deleted applications"}), 403
+            try:
+                if manager.delete_leave_id(user, leave_id):
+                    return jsonify({"message": "Application deleted successfully"}), 200
+            except ValueError as e:
+                return jsonify({"error": e}), 406
+            except Exception as e:
+                return jsonify({"error": e}), 500
     abort(401)
 
 
@@ -82,13 +87,14 @@ def cancel_leave(leave_id):
 # View the remaining leave balance for the current user
 @app_views.route('/leave/balance', methods=["GET"], strict_slashes=False)
 def leave_balance():
-    """ View remaining leave balance """
+    """ View the remaining leave balance for the current user """
     session_id = request.cookies.get("session_id")
     if session_id:
         user = auth.get_user_from_session_id(session_id)
         if user:
-            remaining_leave = manager.get_leave_balance(user.id)
-            if remaining_leave is not None:
-                return jsonify({"remaining_leave_days": remaining_leave}), 200
-            return jsonify({"error": "Failed to retrieve leave balance"}), 500
+            try:
+                balance = manager.get_leave_balance(user.id)
+                return jsonify({"leave_balance": balance}), 200
+            except Exception as e:
+                return jsonify({"error": str(e)}), 400
     abort(401)

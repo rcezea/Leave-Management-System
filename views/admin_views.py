@@ -53,11 +53,12 @@ def convert_json(application, user=False):
 @role_required('admin')
 def admin_get_all_applications():
     """ View all leave applications """
-    all_applications = manager.admin_get_all_applications()
-    applications_list = [convert_json(app) for app in all_applications]
-    if all_applications:
+    try:
+        all_applications = manager.admin_get_all_applications()
+        applications_list = [convert_json(app) for app in all_applications]
         return jsonify({"Applications": applications_list}), 200
-    return jsonify({"Applications": []}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Approve Leave
@@ -67,9 +68,12 @@ def admin_get_all_applications():
 @role_required('admin')
 def approve_leave(leave_id):
     """ Approve leave application """
-    if manager.approve_leave_application(leave_id):
-        return jsonify({"message": "Leave application approved"}), 200
-    abort(400)
+    try:
+        if manager.approve_leave_application(leave_id):
+            return jsonify({"message": "Leave application approved"}), 200
+        abort(400)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Reject Leave
@@ -79,9 +83,12 @@ def approve_leave(leave_id):
 @role_required('admin')
 def reject_leave(leave_id):
     """ Reject leave application """
-    if manager.reject_leave_application(leave_id):
-        return jsonify({"message": "Leave application rejected"}), 200
-    abort(400)
+    try:
+        if manager.reject_leave_application(leave_id):
+            return jsonify({"message": "Leave application rejected"}), 200
+        abort(400)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # View Employee Leave History
@@ -91,16 +98,17 @@ def reject_leave(leave_id):
 @role_required('admin')
 def admin_get_all_by_user(employee_id):
     """ View leave history of an employee """
-    last, first, email, all_applications = manager.admin_get_all_user_applications(employee_id)
-    applications_list = [convert_json(app, True) for app in all_applications]
-    user = {
-        "name": last + " " + first,
-        "email": email
-    }
-    applications_list.insert(0, user)
-    if all_applications:
+    try:
+        last, first, email, all_applications = manager.admin_get_all_user_applications(employee_id)
+        applications_list = [convert_json(app, True) for app in all_applications]
+        administrator = {
+            "name": last + " " + first,
+            "email": email
+        }
+        applications_list.insert(0, administrator)
         return jsonify({"Applications": applications_list}), 200
-    return jsonify({"Applications": []}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Admin Dashboard
@@ -110,11 +118,12 @@ def admin_get_all_by_user(employee_id):
 @role_required('admin')
 def admin():
     """ View admin dashboard """
-    session_id = request.cookies.get("session_id")
-    user = auth.get_user_from_session_id(session_id)
-    if not user:
-        abort(401)
-    if request.method == 'GET':
+    try:
+        session_id = request.cookies.get("session_id")
+        user = auth.get_user_from_session_id(session_id)
+        if not user:
+            abort(401)
+
         employee = {
             "firstname": user.firstname,
             "lastname": user.lastname,
@@ -132,6 +141,8 @@ def admin():
             "Admin": employee,
             "Statistics": stats
         }), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # Admin Create Leave Type
