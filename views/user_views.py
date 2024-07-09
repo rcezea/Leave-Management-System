@@ -18,13 +18,8 @@ auth = Auth()
 def register():
     """ User registration """
     email = request.form.get("email")
-    password = request.form.get("password")
-    firstname = request.form.get("firstname")
-    lastname = request.form.get("lastname")
-    role = request.form.get("role") or None
     form_data = request.form
     kwargs = {key: form_data[key] for key in form_data}
-    print(kwargs)
     try:
         auth.register_user(**kwargs)
         return jsonify({"email": email, "message": "user created"}), 201

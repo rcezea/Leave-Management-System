@@ -21,9 +21,9 @@ class LeaveManager:
         except Exception as e:
             raise e
 
-    def get_all_applications_by_user(self, id):
+    def get_all_applications_by_user(self, userid):
         try:
-            return self._db.all_by_user(id)
+            return self._db.all_by_user(user_id=userid)
         except Exception as e:
             raise e
 
@@ -33,7 +33,7 @@ class LeaveManager:
                 return True
         except ValueError as e:
             raise ValueError(e)
-        except Exception as e:
+        except Exception:
             raise Exception("An unexpected error occurred while deleting leave application.")
 
     def admin_get_all_applications(self):
