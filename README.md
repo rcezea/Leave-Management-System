@@ -8,15 +8,17 @@ Webstack - Portfolio Project
 - **Description**: Register a new user (employee or admin).
 
   - **Input Data**:
-    - `username` (string, required)
+    - `firstname` (string, required)
+    - `lastname` (string, required)
     - `password` (string, required)
     - `email` (string, required)
-    - `role` (string, required, e.g., 'employee' or 'admin')
+    - `role` (string, optional, e.g., 'employee' or 'admin')
 
   - **Format**: JSON
     ```json
     {
-      "username": "john_doe",
+      "firstname": "john",
+      "lastname": "doe",
       "password": "securepassword123",
       "email": "john@example.com",
       "role": "employee"
@@ -45,26 +47,24 @@ Webstack - Portfolio Project
 - **Description**: Authenticate and log in a user.
 
   - **Input Data**:
-    - `username` (string, required)
+    - `email` (string, required)
     - `password` (string, required)
 
   - **Format**: JSON
     ```json
     {
-      "username": "john_doe",
+      "email": "john_doe@gmail.com",
       "password": "securepassword123"
     }
     ```
 
   - **Output Data**:
     - `message` (string)
-    - `token` (string)
 
   - **Format**: JSON
     ```json
     {
       "message": "Login successful",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     }
     ```
 
@@ -348,6 +348,7 @@ Webstack - Portfolio Project
         - `end_date` (string, format: YYYY-MM-DD)
         - `reason` (string)
         - `status` (string, e.g., 'pending', 'approved', 'rejected')
+        - `employee_id` (string)
 
   - **Format**: JSON
     ```json
@@ -359,7 +360,8 @@ Webstack - Portfolio Project
           "start_date": "2024-07-01",
           "end_date": "2024-07-05",
           "reason": "Medical treatment",
-          "status": "approved"
+          "status": false,
+          "employee_id": "60f7cae51c4ae45d3c5f3a1c"
         }
       ]
     }
@@ -371,36 +373,6 @@ Webstack - Portfolio Project
 
 ### Common Endpoints
 
-#### View Leave Types
-- **Endpoint**: `GET /leave/types`
-- **Description**: Retrieve a list of available leave types (e.g., sick leave, annual leave).
-
-  - **Input Data**: None
-  - **Format**: N/A
-
-  - **Output Data**:
-    - `leave_types` (array of objects)
-      - Each object contains:
-        - `type_id` (string)
-        - `name` (string)
-
-  - **Format**: JSON
-    ```json
-    {
-      "leave_types": [
-        {
-          "type_id": "1",
-          "name": "Sick Leave"
-        },
-        {
-          "type_id": "2",
-          "name": "Annual Leave"
-        }
-      ]
-    }
-    ```
-
-  - **Errors**: None expected.
 
 #### View Leave Balance
 - **Endpoint**: `GET /leave/balance`
@@ -546,83 +518,4 @@ Webstack - Portfolio Project
     ```
 
   - **Errors**: None expected.
-
-#### Admin Create Leave Type
-- **Endpoint**: `POST /admin/leave-type`
-- **Description**: Create a new type of leave (e.g., paternity leave).
-
-  - **Input Data**:
-    - `name` (string, required)
-
-  - **Format**: JSON
-    ```json
-    {
-      "name": "Paternity Leave"
-    }
-    ```
-
-  - **Output Data**:
-    - `message` (string)
-    - `type_id` (string)
-
-  - **Format**: JSON
-    ```json
-    {
-      "message": "Leave type created successfully",
-      "type_id": "3"
-    }
-    ```
-
-  - **Errors**:
-    - Raise error if the name is missing or already exists.
-    - Return 400 status code for validation errors.
-
-#### Admin Update Leave Type
-- **Endpoint**: `PUT /admin/leave-type/<type_id>`
-- **Description**: Update an existing leave type.
-
-  - **Input Data**:
-    - `name` (string, optional)
-
-  - **Format**: JSON
-    ```json
-    {
-      "name": "Updated Leave Type Name"
-    }
-    ```
-
-  - **Output Data**:
-    - `message` (string)
-
-  - **Format**: JSON
-    ```json
-    {
-      "message": "Leave type updated successfully"
-    }
-    ```
-
-  - **Errors**:
-    - Raise error if the type_id is not found.
-    - Raise error if the name already exists.
-    - Return 400 status code for validation errors.
-
-#### Admin Delete Leave Type
-- **Endpoint**: `DELETE /admin/leave-type/<type_id>`
-- **Description**: Delete an existing leave type.
-
-  - **Input Data**: None
-  - **Format**: N/A
-
-  - **Output Data**:
-    - `message` (string)
-
-  - **Format**: JSON
-    ```json
-    {
-      "message": "Leave type deleted successfully"
-    }
-    ```
-
-  - **Errors**:
-    - Raise error if the type_id is not found.
-    - Return 404 status code for not found errors.
+  - 
