@@ -170,4 +170,3 @@ class DB:
                 leave.delete()
             user.delete()
             return jsonify({"message": "User deleted successfully"}), 204
-
