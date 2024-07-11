@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="employer.css">
+    <title>Logo . | Login & Registration</title>
+</head>
+<body>
+ <div class="wrapper">
+    <nav class="nav">
+        <div class="nav-logo">
+            <p>LOGO .</p>
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="#" class="link">Home</a></li>
+                <li><a href="#" class="link">Blog</a></li>
+                <li><a href="#" class="link">Services</a></li>
+                <li><a href="#" class="link">About</a></li>
+            </ul>
+        </div>
+        <div class="nav-button">
+            <button class="btn white-btn" id="loginBtn" onclick="showLogin()">Sign In</button>
+            <button class="btn" id="registerBtn" onclick="showRegister()">Sign Up</button>
+        </div>
+        <div class="nav-menu-btn">
+            <i class="bx bx-menu" onclick="myMenuFunction()"></i>
+        </div>
+    </nav>
+<!----------------------------- Form box ----------------------------------->    
+    <div class="form-box">
+        
+        <!------------------- login form -------------------------->
+        <div class="login-container" id="login">
+            <div class="top">
+                <span>Don't have an account? <a href="#" onclick="showRegister()">Sign Up</a></span>
+                <header>Login</header>
+            </div>
+            <div class="input-box">
+                <input type="text" class="input-field" placeholder="Username or Email">
+                <i class="bx bx-user"></i>
+            </div>
+            <div class="input-box">
+                <input type="password" class="input-field" placeholder="Password">
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            <div class="input-box">
+                <input type="submit" class="submit" value="Sign In">
+            </div>
+            <div class="one-col">
+                <div class="one">
+                    <label><a href="#">Forgot password?</a></label>
+                </div>
+            </div>
+        </div>
+        <!------------------- registration form -------------------------->
+        <div class="register-container" id="register">
+            <div class="top">
+                <span>Have an account? <a href="#" onclick="showLogin()">Login</a></span>
+                <header>Sign Up</header>
+            </div>
+            <div class="two-forms">
+                <div class="input-box">
+                    <input type="text" class="input-field" placeholder="Firstname">
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-box">
+                    <input type="text" class="input-field" placeholder="Lastname">
+                    <i class="bx bx-user"></i>
+                </div>
+            </div>
+            <div class="input-box">
+                <input type="text" class="input-field" placeholder="Email" id="email">
+                <i class="bx bx-envelope"></i>
+            </div>
+            <div class="input-box">
+                <input type="password" class="input-field" placeholder="Password" id="password">
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            <div class="input-box">
+                <input type="submit" class="submit" value="Register">
+            </div>
+            <div class="one-col">
+                <div class="one">
+                    <label><a href="#">Terms & Conditions</a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+<script>
+    function myMenuFunction() {
+        var i = document.getElementById("navMenu");
+        if(i.className === "nav-menu") {
+            i.className += " responsive";
+        } else {
+            i.className = "nav-menu";
+        }
+    }
+
+    var a = document.getElementById("loginBtn");
+    var b = document.getElementById("registerBtn");
+    var x = document.getElementById("login");
+    var y = document.getElementById("register");
+
+    function showLogin() {
+        x.style.left = "4px";
+        y.style.right = "-520px";
+        a.className += " white-btn";
+        b.className = "btn";
+        x.style.opacity = 1;
+        y.style.opacity = 0;
+    }
+
+    function showRegister() {
+        x.style.left = "-510px";
+        y.style.right = "5px";
+        a.className = "btn";
+        b.className += " white-btn";
+        x.style.opacity = 0;
+        y.style.opacity = 1;
+    }
+
+    function validateForm(isLogin) {
+        if (isLogin) {
+            var emailOrUsername = document.querySelector('#login input[type="text"]').value;
+            var password = document.querySelector('#login input[type="password"]').value;
+
+            if (!emailOrUsername || !password) {
+                alert("Please enter both email/username and password.");
+                return false;
+            }
+
+            var loginData = {
+                type: "login",
+                emailOrUsername: emailOrUsername,
+                password: password
+            };
+
+            console.log("Login JSON:", JSON.stringify(loginData));
+            // Send loginData to backend
+        } else {
+            var firstname = document.querySelector('#register input[placeholder="Firstname"]').value;
+            var lastname = document.querySelector('#register input[placeholder="Lastname"]').value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            var specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
+
+            if (!emailPattern.test(email)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+
+            var specialCharCount = (password.match(specialCharPattern) || []).length;
+            if (password.length < 8 || specialCharCount < 2) {
+                alert("Password must be at least 8 characters long and contain at least 2 special characters.");
+                return false;
+            }
+
+            var registerData = {
+                type: "signup",
+                role: "employer",
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                password: password
+            };
+
+            console.log("Register JSON:", JSON.stringify(registerData));
+            // Send registerData to backend
+
+            window.location.href = 'authentication.html'
+        }
+
+        alert("Form submission successful!");
+        return true;
+    }
+
+    document.querySelectorAll('.submit').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            var isLogin = event.target.value === "Sign In";
+            validateForm(isLogin);
+        });
+    });
+</script>
+</body>
+</html>
