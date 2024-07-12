@@ -40,8 +40,6 @@ def authenticate_user():
     """
     if auth:
         excluded_paths = [
-            '/unauthorized/',
-            '/forbidden/',
             '/auth/login/',
             '/auth/register/',
         ]
@@ -50,6 +48,13 @@ def authenticate_user():
                     auth.session_cookie(request)):
                 print("Aborting1")
                 abort(401)
-            if auth.current_user(request) is None:
+            auth.__current_user = auth.current_user(request)
+            if auth.__current_user is None:
                 print("Aborting2")
                 abort(403)
+
+
+@app_views.after_request
+def stateless(response):
+    auth.__current_user = None
+    return response

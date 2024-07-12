@@ -8,6 +8,10 @@ from typing import List
 import bcrypt
 from models.db import DB
 from models.user import User
+import redis
+from bson import ObjectId
+
+r = redis.Redis()
 
 
 def _hash_password(password: str) -> bytes:
@@ -27,6 +31,7 @@ class Auth:
     def __init__(self):
         """Initialize a new DB instance
         """
+        self.__current_user = None
         self._db = DB()
 
     def authorization_header(self, request=None) -> str:
@@ -47,7 +52,10 @@ class Auth:
         """ Current User """
         if request is not None:
             session_id = request.cookies.get("session_id")
-            return self.get_user_from_session_id(session_id)
+            user = self.get_user_from_session_id(session_id)
+            if user:
+                del user.password
+                return user
         return None
 
     def register_user(self, **kwargs) -> User:
@@ -56,25 +64,26 @@ class Auth:
         try:
             if self._db.find_user_by(email=email):
                 raise ValueError("Email already registered")
+            kwargs["password"] = _hash_password(kwargs["password"])
             return self._db.create_user(**kwargs)
         except Exception as e:
             raise Exception(f"Error registering user {email}: {str(e)}")
 
     def valid_login(self, email: str, password: str) -> bool:
         """ Validate login credentials """
-        try:
-            user = self._db.find_user_by(email=email)
-            if user:
-                return bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
-            return False
-        except Exception as e:
-            raise Exception(f"Error validating login for {email}: {str(e)}")
+        user = self._db.find_user_by(email=email)
+        if user:
+            return bcrypt.checkpw(password.encode('utf-8'),
+                                  user.password.encode('utf-8'))
+        return False
 
     def create_session(self, email):
         """ Create a new session """
         try:
+            user = User.objects(email=email).first()
             session_id = _generate_uuid()
-            self._db.update_user(email, session_id=session_id)
+            key = f"auth_{session_id}"
+            r.set(key, str(user.id))
             return session_id
         except Exception as e:
             raise Exception(f"Error creating session for {email}: {str(e)}")
@@ -90,11 +99,13 @@ class Auth:
     def get_user_from_session_id(self, session_id: str) -> User or None:
         """ Retrieve user based on session ID """
         try:
-            if session_id:
-                return User.objects(session_id=session_id).first()
-            return None
+            userid = r.get(f"auth_{session_id}")
+            if not userid:
+                return None
+            return User.objects(id=ObjectId(userid.decode("utf-8"))).first()
         except Exception as e:
-            raise Exception(f"Error getting user from session id {session_id}: {str(e)}")
+            raise Exception(f"Error getting user from"
+                            f" session id {session_id}: {str(e)}")
 
     def session_cookie(self, request=None) -> str:
         """ Retrieve session cookie """
@@ -102,9 +113,13 @@ class Auth:
             return request.cookies.get("session_id")
         return None
 
-    def destroy_session(self, email) -> None:
+    def destroy_session(self, session_id) -> None:
         """ Destroy user session """
         try:
-            self._db.update_user(email, session_id=None)
+            r.delete(f"auth_{session_id}")
         except Exception as e:
-            raise Exception(f"Error destroying session for {email}: {str(e)}")
+            raise Exception(f"Error destroying session"
+                            f" for {session_id}: {str(e)}")
+
+
+auth = Auth()

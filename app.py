@@ -4,9 +4,7 @@ app.py
 Flask Application Entry Point
 """
 
-import os
-from os import getenv
-from flask import Flask, jsonify, abort, request
+from flask import Flask, render_template
 from views import app_views
 
 app = Flask(__name__)
@@ -15,7 +13,7 @@ app.register_blueprint(app_views)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return render_template('auth/authentication.html')
 
 
 if __name__ == '__main__':
