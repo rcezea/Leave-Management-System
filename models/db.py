@@ -5,7 +5,7 @@ Database Initialization
 """
 
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import mongoengine
 from models.user import User, Leave
 from flask import jsonify
@@ -20,7 +20,8 @@ class DB:
     """ Class for CRUD operations on the database """
 
     def __init__(self):
-        mongoengine.connect(db='leave_management_system', alias='core', host='localhost')
+        mongoengine.connect(db='leave_management_system',
+                            alias='core', host='localhost')
 
     def create_user(self, **kwargs):
         """ Create a new user """
@@ -42,10 +43,8 @@ class DB:
             user = User.objects(email=email).first()
             if not user:
                 raise ValueError("User not found")
-            start = kwargs.get('start')
-            end = kwargs.get("end")
 
-            if self.check_leave_balance(user, start, end):
+            if self.check_leave_balance(user, kwargs['start'], kwargs['end']):
                 # Create leave application and save
                 leave = Leave(**kwargs)
                 leave.save()
@@ -76,43 +75,48 @@ class DB:
         """ Find leave application by user or leave ID """
         try:
             if user and leave_id:
+                print(user)
                 return Leave.objects(userid=user.id, id=leave_id).first()
             if leave_id:
                 return Leave.objects(id=leave_id).first()
             return None
         except Exception as e:
-            raise Exception(f"Error finding leave for user {user.id} and leave_id {leave_id}: {str(e)}")
+            raise Exception(f"Error finding leave for user "
+                            f"{user.id} and leave_id {leave_id}: {str(e)}")
 
     def all(self):
         """ Retrieve all leave applications """
         return Leave.objects()
 
-    def all_by_user(self, user_id):
+    def all_by_user(self, userid):
         """ Retrieve all leave applications by user """
         try:
-            return Leave.objects(userid=user_id)
+            return Leave.objects(userid=userid)
         except Exception as e:
-            raise Exception(f"Error retrieving applications for user {user_id}: {str(e)}")
+            raise Exception(f"Error retrieving applications "
+                            f"for user {userid}: {str(e)}")
 
     def leave_statistics(self):
         """ Retrieve leave statistics """
         total = Leave.objects().count()
-        pending = Leave.objects(status=False).count()
-        approved = Leave.objects(status=True).count()
-        return total, pending, approved
+        pending = Leave.objects(status="pending").count()
+        rejected = Leave.objects(status="rejected").count()
+        approved = Leave.objects(status="approved").count()
+        return total, pending, approved, rejected
 
     def update_user(self, email, **kwargs):
         """ Update user information """
         user = self.find_user_by(email=email)
         if user:
             for key, value in kwargs.items():
-                if key != 'applications' and hasattr(user, key):
+                if ((key != 'applications', key != 'email')
+                        and hasattr(user, key)):
                     setattr(user, key, value)
             user.save()
             return True
         return False
 
-    def approve_reject_leave(self, leave_id, status=False):
+    def approve_reject_leave(self, leave_id, status):
         """ Approve or reject leave application """
         leave = self.find_leave_by(leave_id=leave_id)
         if leave:
@@ -125,8 +129,10 @@ class DB:
         """ Retrieve remaining leave balance for a user """
         try:
             total_leave = 30  # Assuming 25 days annual leave per year
-            applications = Leave.objects(userid=user_id, status=True, end__gte=date.today())
-            used_leave = sum((app.end - app.start).days + 1 for app in applications)
+            applications = Leave.objects(
+                userid=user_id, status="approved", end__gte=date.today())
+            used_leave = sum((app.end - app.start).days + 1
+                             for app in applications)
             remaining_leave = max(0, total_leave - used_leave)
             return remaining_leave
         except Exception as e:
@@ -136,30 +142,29 @@ class DB:
         """ Checks that balance is enough for new application"""
         try:
             balance = self.leave_balance(user_id=user.id)
+            print(balance)
             end = datetime.strptime(end, '%Y-%m-%d').date()
             start = datetime.strptime(start, '%Y-%m-%d').date()
             duration = (end - start).days + 1
+            print(balance > duration)
             return balance > duration
         except Exception as e:
             raise Exception(e)
 
     def delete_application(self, email, leave_id):
         """ Delete a leave application """
-        try:
-            user = User.objects(email=email).first()
-            if not user:
-                raise ValueError("User not found.")
-            leave = Leave.objects(id=leave_id).first()
-            if not leave:
-                raise ValueError("Leave application not found.")
-            if leave.status is True:
-                return ValueError("Cannot delete approved applications")
-            user.applications = [app for app in user.applications if app.id != leave.id]
+        user = User.objects(email=email).first()
+        if not user:
+            raise ValueError("User not found.")
+        leave = Leave.objects(id=leave_id).first()
+        if leave and leave.status is not "pending":
+            user.applications =\
+                [app for app in user.applications if app.id != leave.id]
             leave.delete()
             user.save()
             return True
-        except Exception as e:
-            raise Exception(f"Error deleting leave application {leave_id} for user {email}: {str(e)}")
+        else:
+            raise ValueError("Can't find pending application.")
 
     def destroy_user(self, email):
         """ Delete a user and associated leave applications """

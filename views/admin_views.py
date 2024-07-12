@@ -8,32 +8,8 @@ from functools import wraps
 
 from views import app_views
 from flask import jsonify, request, abort
-from views.user_views import auth
+from views.user_views import auth, role_required
 from views.leave_views import manager
-
-
-# admin decorator
-def role_required(role):
-    """ Role-based access decorator """
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            session_id = request.cookies.get("session_id")
-            if not session_id:
-                abort(401)  # Unauthorized if no session_id found
-
-            user = auth.get_user_from_session_id(session_id)
-            if not user:
-                abort(401)  # Unauthorized if no user found
-
-            if user.role != role:
-                abort(403)  # Forbidden if role does not match
-
-            return f(*args, **kwargs)  # Call the original function
-
-        return decorated_function
-
-    return decorator
 
 
 def convert_json(application, user=False):
@@ -49,7 +25,8 @@ def convert_json(application, user=False):
 # View Leave Applications
 # Endpoint: GET /admin/leave-applications
 # Description: View all leave applications submitted by employees.
-@app_views.route('/admin/leave-applications', methods=['GET'], strict_slashes=False)
+@app_views.route('/admin/leave-applications',
+                 methods=['GET'], strict_slashes=False)
 @role_required('admin')
 def admin_get_all_applications():
     """ View all leave applications """
@@ -64,7 +41,8 @@ def admin_get_all_applications():
 # Approve Leave
 # Endpoint: PUT /admin/approve-leave/<leave_id>
 # Description: Approve a leave application.
-@app_views.route('/admin/approve-leave/<leave_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/admin/approve-leave/<leave_id>',
+                 methods=['PUT'], strict_slashes=False)
 @role_required('admin')
 def approve_leave(leave_id):
     """ Approve leave application """
@@ -79,7 +57,8 @@ def approve_leave(leave_id):
 # Reject Leave
 # Endpoint: PUT /admin/reject-leave/<leave_id>
 # Description: Reject a leave application.
-@app_views.route('/admin/reject-leave/<leave_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/admin/reject-leave/<leave_id>',
+                 methods=['PUT'], strict_slashes=False)
 @role_required('admin')
 def reject_leave(leave_id):
     """ Reject leave application """
@@ -94,13 +73,16 @@ def reject_leave(leave_id):
 # View Employee Leave History
 # Endpoint: GET /admin/employee-leave-history/<employee_id>
 # Description: View the leave history of a specific employee.
-@app_views.route('/admin/employee-leave-history/<employee_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/admin/employee-leave-history/<employee_id>',
+                 methods=['GET'], strict_slashes=False)
 @role_required('admin')
 def admin_get_all_by_user(employee_id):
     """ View leave history of an employee """
     try:
-        last, first, email, all_applications = manager.admin_get_all_user_applications(employee_id)
-        applications_list = [convert_json(app, True) for app in all_applications]
+        last, first, email, all_applications = (
+            manager.admin_get_all_user_applications(employee_id))
+        applications_list = \
+            [convert_json(app, True) for app in all_applications]
         administrator = {
             "name": last + " " + first,
             "email": email
@@ -119,8 +101,7 @@ def admin_get_all_by_user(employee_id):
 def admin():
     """ View admin dashboard """
     try:
-        session_id = request.cookies.get("session_id")
-        user = auth.get_user_from_session_id(session_id)
+        user = auth.__current_user
         if not user:
             abort(401)
 
@@ -131,11 +112,12 @@ def admin():
             "password": "*************",
             "session_id": user.session_id,
         }
-        total, pending, approved = manager.get_stats()
+        total, pending, approved, rejected = manager.get_stats()
         stats = {
             "total_leaves": total,
             "pending_leaves": pending,
             "approved_leaves": approved,
+            "rejected_leaves": rejected,
         }
         return jsonify({
             "Admin": employee,
@@ -143,16 +125,3 @@ def admin():
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-# Admin Create Leave Type
-# Endpoint: POST /admin/leave-type
-# Description: Create a new type of leave (e.g., paternity leave).
-
-# Admin Update Leave Type
-# Endpoint: PUT /admin/leave-type/<type_id>
-# Description: Update an existing leave type.
-
-# Admin Delete Leave Type
-# Endpoint: DELETE /admin/leave-type/<type_id>
-# Description: Delete an existing leave type.
