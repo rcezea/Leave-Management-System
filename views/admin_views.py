@@ -110,7 +110,6 @@ def admin():
             "lastname": user.lastname,
             "email": user.email,
             "password": "*************",
-            "session_id": user.session_id,
         }
         total, pending, approved, rejected = manager.get_stats()
         stats = {
