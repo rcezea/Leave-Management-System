@@ -6,6 +6,8 @@ Database Initialization
 
 import uuid
 from datetime import date, datetime, timedelta
+
+import bcrypt
 import mongoengine
 from models.user import User, Leave
 from flask import jsonify
@@ -14,6 +16,11 @@ from flask import jsonify
 def _generate_uuid() -> str:
     """Generate UUIDs"""
     return str(uuid.uuid4())
+
+def _hash_password(password: str) -> bytes:
+    """ hash the password """
+    encoded = password.encode('utf-8')
+    return bcrypt.hashpw(encoded, bcrypt.gensalt())
 
 
 class DB:
@@ -75,7 +82,6 @@ class DB:
         """ Find leave application by user or leave ID """
         try:
             if user and leave_id:
-                print(user)
                 return Leave.objects(userid=user.id, id=leave_id).first()
             if leave_id:
                 return Leave.objects(id=leave_id).first()
@@ -107,6 +113,9 @@ class DB:
     def update_user(self, email, **kwargs):
         """ Update user information """
         user = self.find_user_by(email=email)
+        if kwargs['password']:
+            # encrypt possible new password
+            kwargs['password'] = _hash_password(kwargs['password'])
         if user:
             for key, value in kwargs.items():
                 if ((key != 'applications', key != 'email')
@@ -130,7 +139,7 @@ class DB:
         try:
             total_leave = 30  # Assuming 25 days annual leave per year
             applications = Leave.objects(
-                userid=user_id, status="approved", end__gte=date.today())
+                userid=user_id, end__gte=date.today())
             used_leave = sum((app.end - app.start).days + 1
                              for app in applications)
             remaining_leave = max(0, total_leave - used_leave)
@@ -142,11 +151,9 @@ class DB:
         """ Checks that balance is enough for new application"""
         try:
             balance = self.leave_balance(user_id=user.id)
-            print(balance)
             end = datetime.strptime(end, '%Y-%m-%d').date()
             start = datetime.strptime(start, '%Y-%m-%d').date()
             duration = (end - start).days + 1
-            print(balance > duration)
             return balance > duration
         except Exception as e:
             raise Exception(e)

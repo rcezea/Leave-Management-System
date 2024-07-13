@@ -67,7 +67,6 @@ def login():
         authHeader = authHeader.split(" ")[1]
         authHeader = base64.b64decode(authHeader).decode('utf-8')
         authHeader = authHeader.split(":")
-    print(authHeader)
     email = request.form.get("email") or authHeader[0]
     password = request.form.get("password") or authHeader[1]
     try:
@@ -91,7 +90,7 @@ def logout():
     try:
         session_id = request.cookies.get("session_id")
         auth.destroy_session(session_id)
-        resp = redirect('/')
+        resp = jsonify({"message": "Logged out successfully"})
         resp.set_cookie("session_id", '',  # Delete the cookie
                         expires=0, httponly=True, secure=True)
         auth.__current_user = None
@@ -122,7 +121,7 @@ def user():
                 "password": "*************",
                 "applications": applications
             }
-            return render_template('auth/index1.html', user=employee), 200
+            return jsonify({"Employee": employee}), 200
         elif request.method == 'PUT':
             form_data = request.form
             kwargs = {key: form_data[key] for key in form_data}
