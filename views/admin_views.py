@@ -7,7 +7,7 @@ import json
 from functools import wraps
 
 from views import app_views
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, render_template, redirect
 from views.user_views import auth, role_required
 from views.leave_views import manager
 
@@ -104,6 +104,8 @@ def admin():
         user = auth.__current_user
         if not user:
             abort(401)
+        if user.role == 'admin':
+            return redirect('/user/profile')
 
         employee = {
             "firstname": user.firstname,
@@ -118,9 +120,6 @@ def admin():
             "approved_leaves": approved,
             "rejected_leaves": rejected,
         }
-        return jsonify({
-            "Admin": employee,
-            "Statistics": stats
-        }), 200
+        return render_template('dashboard/admin_dashboard.html', employee=employee, stats=stats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

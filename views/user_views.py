@@ -103,13 +103,14 @@ def logout():
 # Endpoint: PUT /user/profile
 # Description: Update user profile information.
 @app_views.route('/user/profile', methods=['GET', 'PUT'], strict_slashes=False)
-@role_required('employee')
 def user():
     """ implement a profile """
     try:
         user = auth.__current_user
         if not user:
             abort(401)
+        if user.role == 'admin':
+            return redirect('/admin/dashboard')
         pending = 0
         rejected = 0
         approved = 0
@@ -139,10 +140,7 @@ def user():
                 "total": total,
             }
             # Render a different dashboard based on the role
-            if user.role == 'admin':
-                return render_template('dashboard/admin_dashboard.html', employee=employee)
-            else:
-                return render_template('dashboard/employee_dashboard.html', employee=employee)
+            return render_template('dashboard/employee_dashboard.html', employee=employee)
         elif request.method == 'PUT':
             form_data = request.form
             kwargs = {key: form_data[key] for key in form_data}
