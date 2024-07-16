@@ -6,11 +6,10 @@ Leave processing views
 from mongoengine import DoesNotExist, ValidationError
 
 from views import app_views
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, render_template
 from models.leave import LeaveManager
 from views.user_views import auth, role_required
 import json
-
 
 manager = LeaveManager(auth)
 
@@ -18,20 +17,53 @@ manager = LeaveManager(auth)
 # Employee Endpoints
 # Endpoint: POST /leave/apply
 # Description: Submit a new leave application.
-@app_views.route('/leave/apply', methods=["POST"], strict_slashes=False)
+@app_views.route('/leave/apply', methods=["POST", "GET"], strict_slashes=False)
 @role_required('employee')
 def apply():
     """ Submit a new leave application """
     try:
-        user = auth.__current_user
-        form_data = request.form
-        kwargs = {key: form_data[key] for key in form_data}
-        kwargs.update(userid=user.id)
-        leave = manager.create_leave_application(user.email,
-                                                 **kwargs)
-        if leave:
-            return (jsonify({"message": "Application submitted successfuly"}),
-                    201)
+        if request.method == "GET":
+            user = auth.__current_user
+            if not user:
+                abort(401)
+            pending = 0
+            rejected = 0
+            approved = 0
+            applications = \
+                [convert_dates(app) for app in user.applications] \
+                if user.applications else []
+            print(applications)
+            total = len(applications)
+            for item in applications:
+                print(item["status"])
+                if item["status"] == 'pending':
+                    pending += 1
+                elif item["status"] == 'approved':
+                    approved += 1
+                elif item["status"] == 'rejected':
+                    rejected += 1
+            employee = {
+                "firstname": user.firstname,
+                "lastname": user.lastname,
+                "email": user.email,
+                "password": "*************",
+                "applications": applications,
+                "pending": pending,
+                "rejected": rejected,
+                "approved": approved,
+                "total": total,
+            }
+            return render_template('dashboard/apply_leave.html', employee=employee)
+        else:
+            user = auth.__current_user
+            form_data = request.form
+            kwargs = {key: form_data[key] for key in form_data}
+            kwargs.update(userid=user.id)
+            leave = manager.create_leave_application(user.email,
+                                                     **kwargs)
+            if leave:
+                return (jsonify({"message": "Application submitted successfuly"}),
+                        201)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     abort(401)

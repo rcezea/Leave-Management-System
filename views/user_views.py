@@ -84,7 +84,7 @@ def login():
 # User Logout
 # Endpoint: POST /auth/logout
 # Description: Log out the current user.
-@app_views.route('/auth/logout', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/auth/logout', methods=['GET'], strict_slashes=False)
 def logout():
     """ User logout """
     try:
@@ -94,7 +94,7 @@ def logout():
         resp.set_cookie("session_id", '',  # Delete the cookie
                         expires=0, httponly=True, secure=True)
         auth.__current_user = None
-        return resp
+        return redirect('/')
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -110,18 +110,39 @@ def user():
         user = auth.__current_user
         if not user:
             abort(401)
+        pending = 0
+        rejected = 0
+        approved = 0
         if request.method == 'GET':
             applications = \
                 [convert_dates(app) for app in user.applications] \
                 if user.applications else []
+            print(applications)
+            total = len(applications)
+            for item in applications:
+                print(item["status"])
+                if item["status"] == 'pending':
+                    pending += 1
+                elif item["status"] == 'approved':
+                    approved += 1
+                elif item["status"] == 'rejected':
+                    rejected += 1
             employee = {
                 "firstname": user.firstname,
                 "lastname": user.lastname,
                 "email": user.email,
                 "password": "*************",
-                "applications": applications
+                "applications": applications,
+                "pending": pending,
+                "rejected": rejected,
+                "approved": approved,
+                "total": total,
             }
-            return jsonify({"Employee": employee}), 200
+            # Render a different dashboard based on the role
+            if user.role == 'admin':
+                return render_template('dashboard/admin_dashboard.html', employee=employee)
+            else:
+                return render_template('dashboard/employee_dashboard.html', employee=employee)
         elif request.method == 'PUT':
             form_data = request.form
             kwargs = {key: form_data[key] for key in form_data}
