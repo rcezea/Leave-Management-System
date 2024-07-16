@@ -7,7 +7,7 @@ import json
 from functools import wraps
 
 from views import app_views
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, render_template
 from views.user_views import auth, role_required
 from views.leave_views import manager
 
@@ -118,9 +118,6 @@ def admin():
             "approved_leaves": approved,
             "rejected_leaves": rejected,
         }
-        return jsonify({
-            "Admin": employee,
-            "Statistics": stats
-        }), 200
+        return render_template('dashboard/admin_dashboard.html', employee=employee, stats=stats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
