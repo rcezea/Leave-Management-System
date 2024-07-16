@@ -4,7 +4,7 @@ error_handlers.py
 Error handling views
 """
 from views import app_views
-from flask import abort, request, jsonify
+from flask import abort, request, jsonify, redirect
 from views.user_views import auth
 
 
@@ -46,10 +46,12 @@ def authenticate_user():
         if auth.require_auth(request.path, excluded_paths):
             if not (auth.authorization_header(request) or
                     auth.session_cookie(request)):
+                print("abort1")
                 abort(401)
             auth.__current_user = auth.current_user(request)
             if auth.__current_user is None:
-                abort(403)
+                print("abort2")
+                return redirect('/')
 
 
 @app_views.after_request
