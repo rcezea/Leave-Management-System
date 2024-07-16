@@ -14,17 +14,17 @@
     <section id="sidebar">
         <a href="#" class="brand">
             <i class='bx bxs-user-voice'></i>
-            <span class="text">Ciara Chiamaka</span>
+            <span class="text">{{ employee.firstname }} {{ employee.lastname }}</span>
         </a>
         <ul class="side-menu top">
             <li class="active">
-                <a href="/dashboard">
+                <a href="/user/profile">
                     <i class='bx bxs-dashboard'></i>
                     <span class="text">Home</span>
                 </a>
             </li>
             <li>
-                <a href="/apply">
+                <a href="/leave/apply">
                     <i class='bx bxs-group' ></i>
                     <span class="text">Apply Leave</span>
                 </a>
@@ -47,7 +47,7 @@
 
             <ul class="side-menu">
             <li>
-                <a href="" class="logout">
+                <a href="/auth/logout" class="logout">
                     <i class='bx bx-log-out-circle' ></i>
                     <span class="text">Logout</span>
                 </a>
@@ -98,28 +98,28 @@
         <li>
             <i class='bx bxs-calendar-check' ></i>
             <span class="text">
-                <h3>28</h3>
+                <h3>{{ employee.pending }}</h3>
                 <p>Pending</p>
             </span>
         </li>
         <li>
             <i class='bx bxs-user-check'></i>
             <span class="text">
-                <h3>50</h3>
+                <h3>{{ employee.approved }}</h3>
                 <p>Approved</p>
             </span>
         </li>
         <li>
             <i class='bx bxs-x-circle'></i>
                 <span class="text">
-                <h3>10</h3>
+                <h3>{{ employee.rejected }}</h3>
                 <p>Rejected</p>
             </span>
         </li>
         <li>
             <i class='bx bxs-receipt'></i>
                 <span class="text">
-                <h3>88</h3>
+                <h3>{{ employee.total }}</h3>
                 <p>Total</p>
             </span>
         </li>
@@ -142,46 +142,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                            <p>Ciara Chiamaka</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status pending">Pending</span></td>
+                    {% for item in employee.applications %}
+                        <tr>
+                            <td>
+                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                            </td>
+                            <td>{{ item.start }}</td>
+                            <td><span class="status pending">{{ item.status.capitalize() }}</span></td>
                     </tr>
-                    <tr>
-                        <td>
-                            <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                            <p>Ciara Chiamaka</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status rejected">Rejected</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                            <p>Ciara Chiamaka</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status approved">Approved</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                            <p>Ciara Chiamaka</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status rejected">Rejected</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                            <p>Ciara Chiamaka</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status pending">Pending</span></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
