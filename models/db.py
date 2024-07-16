@@ -6,7 +6,7 @@ Database Initialization
 
 import uuid
 from datetime import date, datetime, timedelta
-
+from os import getenv
 import bcrypt
 import mongoengine
 from models.user import User, Leave
@@ -16,6 +16,7 @@ from flask import jsonify
 def _generate_uuid() -> str:
     """Generate UUIDs"""
     return str(uuid.uuid4())
+
 
 def _hash_password(password: str) -> bytes:
     """ hash the password """
@@ -28,7 +29,7 @@ class DB:
 
     def __init__(self):
         mongoengine.connect(db='leave_management_system',
-                            alias='core', host='localhost')
+                            alias='core', host=getenv('URL'))
 
     def create_user(self, **kwargs):
         """ Create a new user """
@@ -165,7 +166,7 @@ class DB:
             raise ValueError("User not found.")
         leave = Leave.objects(id=leave_id).first()
         if leave and leave.status is not "pending":
-            user.applications =\
+            user.applications = \
                 [app for app in user.applications if app.id != leave.id]
             leave.delete()
             user.save()
