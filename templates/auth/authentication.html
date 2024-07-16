@@ -147,7 +147,6 @@
               })
                 .then(data => {
                     // Redirect or update UI based on response
-                    alert(data.message);
                     window.location.href = '/user/profile'; // Redirect to another page
 
                 })
@@ -196,11 +195,10 @@
               .then(result => console.log(result))
               .catch(error => console.log('error', error));
 
-            {#window.location.href = '/'#}
+            window.location.href = '/'
         }
 
-        alert("Form submission successful!");
-        {#return true;#}
+        return true;
     }
 
     document.querySelectorAll('.submit').forEach(button => {

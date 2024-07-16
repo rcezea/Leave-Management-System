@@ -18,19 +18,19 @@
         </a>
         <ul class="side-menu top">
             <li>
-                <a href="/dashboard">
+                <a href="/user/profile">
                     <i class='bx bxs-dashboard'></i>
                     <span class="text">Home</span>
                 </a>
             </li>
             <li class="active">
-                <a href="/apply">
+                <a href="/leave/apply">
                     <i class='bx bxs-group' ></i>
                     <span class="text">Apply Leave</span>
                 </a>
             </li>
             <li>
-                <a href="/leaves">
+                <a href="#">
                     <i class='bx bxs-bar-chart-alt-2' ></i>
                     <span class="text">My Leaves</span>
                 </a>
@@ -44,7 +44,7 @@
         </ul>
         <ul class="side-menu">
             <li>
-                <a href="" class="logout">
+                <a href="/auth/logout" class="logout">
                     <i class='bx bx-log-out-circle' ></i>
                     <span class="text">Logout</span>
                 </a>
@@ -112,7 +112,7 @@
                         </div>
                         <div class="buttons">
                             <button type="submit">APPLY LEAVE</button>
-                            <a href="/dashboard">CANCEL</a>
+                            <a href="/user/profile">CANCEL</a>
                         </div>
                     </form>
                 </div>
@@ -121,7 +121,7 @@
         <!-- MAIN -->
     </section>
 
-    <script src="../../static/js/dashboard.js"></script>
+    <script src="../../static/js/user/profile.js"></script>
     <script>
         function validateAndSubmitForm(event) {
             event.preventDefault();  // Prevent the default form submission
@@ -155,7 +155,7 @@
             };
 
             // Send the leaveData to the Flask route using Fetch API
-            fetch('/apply_leave', {
+            fetch('/leave/apply', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -171,7 +171,7 @@
             .then(data => {
                 console.log(data);
                 // Redirect to confirmation page
-                window.location.href = '/leaves';
+                window.location.href = '/user/profile';
             })
             .catch(error => {
                 console.error('Error:', error);
