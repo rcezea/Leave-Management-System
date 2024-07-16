@@ -485,13 +485,13 @@ body {
 	border-radius: 20px;
 	font-weight: 700;
 }
-#content main .table-data .order table tr td .status.completed {
+#content main .table-data .order table tr td .status.pending {
 	background: var(--blue);
 }
-#content main .table-data .order table tr td .status.process {
+#content main .table-data .order table tr td .status.approved {
 	background: var(--yellow);
 }
-#content main .table-data .order table tr td .status.pending {
+#content main .table-data .order table tr td .status.rejected {
 	background: var(--orange);
 }
 
@@ -516,10 +516,10 @@ body {
 #content main .table-data .todo .todo-list li .bx {
 	cursor: pointer;
 }
-#content main .table-data .todo .todo-list li.completed {
+#content main .table-data .todo .todo-list li.pending {
 	border-left: 10px solid var(--blue);
 }
-#content main .table-data .todo .todo-list li.not-completed {
+#content main .table-data .todo .todo-list li.not-pending {
 	border-left: 10px solid var(--orange);
 }
 #content main .table-data .todo .todo-list li:last-child {
@@ -542,53 +542,70 @@ body {
 	margin-top: 0;
 	font-weight: bold;
 	color: #333;
-  }
-  
-  .form-group {
-	margin-bottom: 20px;
-  }
-  
-  label {
-	display: inline-block;
-	width: 120px;
-	margin-right: 10px;
-	text-align: right;
-  }
-  
-  input[type="text"], select, textarea {
-	width: 40%;
-	padding: 10px;
-	margin-bottom: 20px;
-	border: 1px solid #ccc;
-  }
-  
-  input[type="text"]:focus, select:focus, textarea:focus {
-	border-color: #aaa;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  #from-date-calendar, #to-date-calendar {
-	position: absolute;
-	z-index: 1;
-	background-color: #fff;
-	border: 1px solid #ccc;
-	padding: 10px;
-	display: none;
-  }
-  
-  #from-date-calendar.show, #to-date-calendar.show {
-	display: block;
-  }
-  
-  .error {
-	color: red;
-	font-size: 12px;
-	margin-bottom: 10px;
 }
 
-.leave-text {
-	margin-bottom: 20px;
+.container h3 {
+	margin-right: auto;
+	font-size: 22px;
+	font-weight: 600;
 }
+
+#leave-request-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 20px;
+	margin-right: 10%;
+	margin-top: 4vh;
+}
+
+/* Label and input styles */
+.form-group {
+  display: grid; /* use grid to layout the label and input */
+  grid-template-columns: 1fr 2fr; /* label takes 1 part, input takes 2 parts */
+  align-items: center; /* align the label and input vertically */
+}
+
+label {
+  justify-self: end; /* align the label to the right */
+  margin-right: 10px; /* add some space between the label and input */
+}
+
+input, select, textarea {
+  padding: 10px; /* add some padding to the inputs */
+  border: 1px solid #ccc; /* add a border */
+  border-radius: 5px; /* add a subtle border radius */
+}
+
+.buttons {
+  display: flex; /* use flexbox to layout the buttons */
+  margin-top: 0.5vh; /* add some space above the buttons */
+	margin-left: 33.5%;
+}
+
+button[type="submit"] {
+  background-color: var(--blue); /* add a green background to the submit button */
+  color: #fff; /* make the text white */
+  padding: 10px 20px; /* add some padding to the button */
+  border: none; /* remove the border */
+  border-radius: 5px; /* add a subtle border radius */
+  cursor: pointer; /* add a pointer cursor */
+	margin-right: 1vw;
+	font-weight: bold;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--orange); /* add a darker green background on hover */
+}
+
+.buttons a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--dark-brown);
+	font-weight: 500;
+}
+
+
 /* MAIN */
 /* CONTENT */
 
