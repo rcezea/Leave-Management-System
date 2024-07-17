@@ -10,11 +10,11 @@
     <title>Leave Management</title>
 </head>
 <body>
-    <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
     <section id="sidebar">
         <a href="#" class="brand">
             <i class='bx bxs-user-voice'></i>
-            <span class="text">Ciara Chiamaka</span>
+            <span class="text">{{ employee.firstname }} {{ employee.lastname }}</span>
         </a>
         <ul class="side-menu top">
             <li>
@@ -24,19 +24,19 @@
                 </a>
             </li>
             <li>
-                <a href="/apply">
+                <a href="/leave/apply">
                     <i class='bx bxs-group' ></i>
                     <span class="text">Apply Leave</span>
                 </a>
             </li>
             <li class="active">
-                <a href="#">
+              <a href="/leave/status">
                     <i class='bx bxs-bar-chart-alt-2' ></i>
                     <span class="text">My Leaves</span>
                 </a>
             </li>
             <li>
-                <a href="/password">
+                <a href="/user/update">
                     <i class='bx bxs-report' ></i>
                     <span class="text">Change Password</span>
                 </a>

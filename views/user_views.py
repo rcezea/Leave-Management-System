@@ -102,11 +102,11 @@ def logout():
 # Update User Profile
 # Endpoint: PUT /user/profile
 # Description: Update user profile information.
-@app_views.route('/user/profile', methods=['GET', 'PUT'], strict_slashes=False)
+@app_views.route('/user/profile', methods=['GET'], strict_slashes=False)
 def user():
     """ implement a profile """
+    user = auth.__current_user
     try:
-        user = auth.__current_user
         if not user:
             abort(401)
         if user.role == 'admin':
@@ -117,11 +117,9 @@ def user():
         if request.method == 'GET':
             applications = \
                 [convert_dates(app) for app in user.applications] \
-                if user.applications else []
-            print(applications)
+                    if user.applications else []
             total = len(applications)
             for item in applications:
-                print(item["status"])
                 if item["status"] == 'pending':
                     pending += 1
                 elif item["status"] == 'approved':
@@ -141,13 +139,6 @@ def user():
             }
             # Render a different dashboard based on the role
             return render_template('dashboard/employee_dashboard.html', employee=employee)
-        elif request.method == 'PUT':
-            form_data = request.form
-            kwargs = {key: form_data[key] for key in form_data}
-            if auth.update_user(user.email, **kwargs):
-                return jsonify({"message": "User updated successfully"}), 202
-            return jsonify({"error": "User update failed"}), 400
-        abort(400)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -158,3 +149,26 @@ def convert_dates(application):
     application_dict['end'] = application.end.isoformat()
     del application_dict['userid']
     return application_dict
+
+
+# Update User Profile
+# Endpoint: GET /user/profile renders the change password page
+# Endpoint: PUT /user/profile updates the user's password
+# Description: Update user profile information.
+@app_views.route('/user/update', methods=['GET', 'PUT'], strict_slashes=False)
+def update():
+    user = auth.__current_user
+    if request.method == "GET":
+        employee = {
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+        }
+        return render_template('dashboard/change_password.html', employee=employee)
+    try:
+        form_data = request.form
+        kwargs = {key: form_data[key] for key in form_data}
+        if auth.update_user(user.email, **kwargs):
+            return jsonify({"message": "User updated successfully"}), 202
+        return jsonify({"error": "User update failed"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
