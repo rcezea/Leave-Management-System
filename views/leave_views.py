@@ -3,6 +3,8 @@
 leave_vies.py
 Leave processing views
 """
+import ast
+
 from mongoengine import DoesNotExist, ValidationError
 
 from views import app_views
@@ -67,7 +69,7 @@ def status():
         applications = []
         if user.applications:
             applications = sorted([convert_dates(app) for app in user.applications], key=lambda x: ('pending', 'rejected', 'approved').index(x['status']))
-        employee ={
+        employee = {
             "firstname": user.firstname,
             "lastname": user.lastname,
         }
@@ -88,6 +90,8 @@ def status():
 def cancel_leave(leave_id):
     """ Cancel a pending leave application """
     try:
+        data_dict = ast.literal_eval(leave_id.replace("'", "\""))
+        leave_id = data_dict['$oid']
         user = auth.__current_user
         if manager.delete_leave(user, leave_id):
             return jsonify({"message": "Application "
