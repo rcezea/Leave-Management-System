@@ -166,6 +166,67 @@ body {
 /* SIDEBAR */
 
 
+/* MODAL TO CANCEL PENDING LEAVE REQUESTS */
+.modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #fefefe;
+	padding: 20px 20px 20px 0px;
+	border: 1px solid #888;
+	width: 400px;
+	max-width: 80%;
+	border-radius: 10px;
+	text-align: center;
+	box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+	position: relative;
+}
+
+.close {
+	color: #aaa;
+	position: absolute;
+	top: 10px;
+	right: 20px;
+	font-size: 28px;
+	font-weight: bold
+}
+.close:hover,
+.close:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+}
+.modal-content button {
+		margin: 10px;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+}
+#cancelButton {
+		background-color: #f44336; /* Red */
+		color: white;
+}
+#closeButton {
+		background-color: #bbb; /* Gray */
+		color: white;
+}
+.modal-content button:hover {
+		opacity: 0.8;
+}
 
 
 
