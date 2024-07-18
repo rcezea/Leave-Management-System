@@ -9,9 +9,11 @@ from views import app_views
 from flask import jsonify, request, abort, render_template
 from models.leave import LeaveManager
 from views.user_views import auth, role_required
+from datetime import date, datetime
 import json
 
 manager = LeaveManager(auth)
+
 
 # Employee Endpoints
 # Endpoint: POST /leave/apply
@@ -25,32 +27,9 @@ def apply():
             user = auth.__current_user
             if not user:
                 abort(401)
-            pending = 0
-            rejected = 0
-            approved = 0
-            applications = \
-                [convert_dates(app) for app in user.applications] \
-                if user.applications else []
-            print(applications)
-            total = len(applications)
-            for item in applications:
-                print(item["status"])
-                if item["status"] == 'pending':
-                    pending += 1
-                elif item["status"] == 'approved':
-                    approved += 1
-                elif item["status"] == 'rejected':
-                    rejected += 1
             employee = {
                 "firstname": user.firstname,
                 "lastname": user.lastname,
-                "email": user.email,
-                "password": "*************",
-                "applications": applications,
-                "pending": pending,
-                "rejected": rejected,
-                "approved": approved,
-                "total": total,
             }
             return render_template('dashboard/apply_leave.html', employee=employee)
         else:
@@ -85,14 +64,15 @@ def status():
     """ View leave application status """
     try:
         user = auth.__current_user
-        applications = []
-        if user.applications:
-            applications = sorted([convert_dates(app) for app in user.applications], key=lambda x: ('pending', 'rejected', 'approved').index(x['status']))
+        applications = manager.get_all_applications_by_user(user.id)
+        applications_list = [convert_dates(app) for app in applications]
         employee ={
             "firstname": user.firstname,
             "lastname": user.lastname,
         }
-        return render_template('dashboard/my_leaves.html', applications=applications, employee=employee)
+        return render_template('dashboard/my_leaves.html',
+                               applications=applications_list, employee=employee,
+                               datetime=datetime, date=date)
         # return jsonify({"leave_applications": applications_list})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
