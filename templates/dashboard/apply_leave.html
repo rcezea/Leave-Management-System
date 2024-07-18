@@ -7,7 +7,8 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <title>Leave Management</title>
+    <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
+    <title>LMS | Dashboard</title>
 </head>
 <body>
         <!-- SIDEBAR -->
@@ -114,7 +115,7 @@
                             <textarea id="leave-reason" name="leaveReason" rows="5" required></textarea>
                         </div>
                         <div class="buttons">
-                            <button type="submit">APPLY LEAVE</button>
+                            <button type="submit" onclick="validateAndSubmitForm(event)">APPLY LEAVE</button>
                             <a href="/user/profile">CANCEL</a>
                         </div>
                     </form>
@@ -124,62 +125,62 @@
         <!-- MAIN -->
     </section>
 
-    <script src="../../static/js/user/profile.js"></script>
+    <script src="../../static/js/dashboard.js"></script>
     <script>
-        function validateAndSubmitForm(event) {
-            event.preventDefault();  // Prevent the default form submission
+    function validateAndSubmitForm(event) {
+        event.preventDefault();  // Prevent the default form submission
 
-            const fromDateInput = document.getElementById('from-date');
-            const toDateInput = document.getElementById('to-date');
+        const fromDateInput = document.getElementById('from-date');
+        const toDateInput = document.getElementById('to-date');
 
-            function isValidDate(dateString) {
-                const date = new Date(dateString);
-                return !isNaN(date.getTime());
-            }
-
-            function calculateDays(fromDate, toDate) {
-                const diffInMs = toDate - fromDate;
-                return diffInMs / (1000 * 60 * 60 * 24);
-            }
-
-            const fromDate = new Date(fromDateInput.value);
-            const toDate = new Date(toDateInput.value);
-
-            if (!isValidDate(fromDateInput.value) || !isValidDate(toDateInput.value) || calculateDays(fromDate, toDate) <= 0) {
-                alert('Please enter valid dates. To Date must be after From Date.');
-                return;
-            }
-
-            const leaveData = {
-                fromDate: fromDate.toISOString(),
-                toDate: toDate.toISOString(),
-                leaveType: document.getElementById('leave-type').value,
-                leaveReason: document.getElementById('leave-reason').value
-            };
-
-            // Send the leaveData to the Flask route using Fetch API
-            fetch('/leave/apply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(leaveData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                // Redirect to confirmation page
-                window.location.href = '/user/profile';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        function isValidDate(dateString) {
+            const date = new Date(dateString);
+            return !isNaN(date.getTime());
         }
+
+        function calculateDays(fromDate, toDate) {
+            const diffInMs = toDate - fromDate;
+            return diffInMs / (1000 * 60 * 60 * 24);
+        }
+
+        const fromDate = new Date(fromDateInput.value);
+        const toDate = new Date(toDateInput.value);
+
+        if (!isValidDate(fromDateInput.value) || !isValidDate(toDateInput.value) || calculateDays(fromDate, toDate) <= 0) {
+            alert('Please enter valid dates. To Date must be after From Date.');
+            return;
+        }
+
+        const leaveData = new URLSearchParams();
+        leaveData.append('fromDate', fromDate.toISOString());
+        leaveData.append('toDate', toDate.toISOString());
+        leaveData.append('leaveType', document.getElementById('leave-type').value);
+        leaveData.append('leaveReason', document.getElementById('leave-reason').value);
+
+        // Send the leaveData to the Flask route using Fetch API
+        fetch('/leave/apply', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: leaveData.toString()
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            // Redirect to confirmation page
+            window.location.href = '/user/profile';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
     </script>
 </body>
 </html>

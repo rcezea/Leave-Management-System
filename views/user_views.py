@@ -10,6 +10,7 @@ from functools import wraps
 from flask import jsonify, request, abort, make_response, redirect, render_template
 from views import app_views
 from authentication.auth import Auth
+import random
 
 auth = Auth()
 
@@ -131,14 +132,14 @@ def user():
                 "lastname": user.lastname,
                 "email": user.email,
                 "password": "*************",
-                "applications": applications,
                 "pending": pending,
                 "rejected": rejected,
                 "approved": approved,
                 "total": total,
             }
+            apply_five = applications[:5]
             # Render a different dashboard based on the role
-            return render_template('dashboard/employee_dashboard.html', employee=employee)
+            return render_template('dashboard/employee_dashboard.html', employee=employee, applications=apply_five)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
