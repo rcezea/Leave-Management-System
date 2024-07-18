@@ -100,36 +100,104 @@
                     <i class='bx bx-search' ></i>
                     <i class='bx bx-filter' ></i>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
-                            <th>Days</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in applications %}
-                        <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item['_id'] }}">
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
-                            </td>
-                            <td>{{ item.start }}</td>
-                            <td>{{ item.end }}</td>
-                            <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
-                            <td>
-                                <span class="status {% if item.status == 'pending' %}pending{% elif item.status == 'approved' %}approved{% elif item.status == 'rejected' %}rejected{% endif %}">
-                                    {{ item.status.capitalize() }}
-                                </span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                    
-                </table>
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('approved-section')">Approved</div>
+                    <div id="approved-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'approved' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status approved">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('pending-section')">Pending</div>
+                    <div id="pending-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'pending' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status pending">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('rejected-section')">Rejected</div>
+                    <div id="rejected-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'rejected' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status rejected">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -213,6 +281,14 @@
                     alert(`${error.message}`);
                     console.log("Fetch error:", error);
                 });
+            }
+        }
+        function toggleSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
             }
         }
 </script>
