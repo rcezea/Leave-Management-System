@@ -114,17 +114,24 @@ class DB:
     def update_user(self, email, **kwargs):
         """ Update user information """
         user = self.find_user_by(email=email)
+        if not user:
+            return False
+        if not bcrypt.checkpw(kwargs["oldpassword"].encode('utf-8'),
+                              user.password.encode('utf-8')):
+            raise ValueError("Incorrect Old Password")
+        if bcrypt.checkpw(kwargs["password"].encode('utf-8'),
+                          user.password.encode('utf-8')):
+            raise ValueError("New password same as Old")
         if kwargs['password']:
             # encrypt possible new password
-            kwargs['password'] = _hash_password(kwargs['password'])
-        if user:
-            for key, value in kwargs.items():
-                if ((key != 'applications', key != 'email')
-                        and hasattr(user, key)):
-                    setattr(user, key, value)
-            user.save()
-            return True
-        return False
+            kwargs['password'] = _hash_password(kwargs['password']).decode('utf-8')
+        for key, value in kwargs.items():
+            if ((key != 'applications', key != 'email')
+                    and hasattr(user, key)):
+                setattr(user, key, value)
+        # setattr(user, "password", kwargs["password"])
+        user.save()
+        return True
 
     def approve_reject_leave(self, leave_id, status):
         """ Approve or reject leave application """

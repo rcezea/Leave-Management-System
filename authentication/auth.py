@@ -64,7 +64,7 @@ class Auth:
         try:
             if self._db.find_user_by(email=email):
                 raise ValueError("Email already registered")
-            kwargs["password"] = _hash_password(kwargs["password"])
+            kwargs["password"] = _hash_password(kwargs["password"]).decode('utf-8')
             return self._db.create_user(**kwargs)
         except Exception as e:
             raise Exception(f"Error registering user {email}: {str(e)}")
