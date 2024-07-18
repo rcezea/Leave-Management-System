@@ -670,8 +670,30 @@ button[type="submit"]:hover {
 /* MAIN */
 /* CONTENT */
 
+/* MY LEAVES */
+.status-section {
+	margin-bottom: 20px;
+}
 
+.status-toggle {
+	cursor: pointer;
+	font-weight: bold;
+	background-color: #f0f0f0;
+	padding: 10px;
+	border: 1px solid #ddd;
+	margin-bottom: 10px;
+	border-radius: 7px;
+}
 
+.status-pane {
+	display: none;
+}
+
+.status {
+	padding: 5px 10px;
+	border-radius: 10px;
+	color: #fff;
+}
 
 
 
