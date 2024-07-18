@@ -64,14 +64,15 @@ def status():
     """ View leave application status """
     try:
         user = auth.__current_user
-        applications = manager.get_all_applications_by_user(user.id)
-        applications_list = [convert_dates(app) for app in applications]
+        applications = []
+        if user.applications:
+            applications = sorted([convert_dates(app) for app in user.applications], key=lambda x: ('pending', 'rejected', 'approved').index(x['status']))
         employee ={
             "firstname": user.firstname,
             "lastname": user.lastname,
         }
         return render_template('dashboard/my_leaves.html',
-                               applications=applications_list, employee=employee,
+                               applications=applications, employee=employee,
                                datetime=datetime, date=date)
         # return jsonify({"leave_applications": applications_list})
     except Exception as e:
