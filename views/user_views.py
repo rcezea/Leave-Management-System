@@ -99,9 +99,9 @@ def logout():
         return jsonify({"error": str(e)}), 500
 
 
-# Update User Profile
-# Endpoint: PUT /user/profile
-# Description: Update user profile information.
+# Get User Profile
+# Endpoint: GET /user/profile
+# Description: GET user profile information.
 @app_views.route('/user/profile', methods=['GET'], strict_slashes=False)
 def user():
     """ implement a profile """
@@ -158,13 +158,13 @@ def convert_dates(application):
 @app_views.route('/user/update', methods=['GET', 'PUT'], strict_slashes=False)
 def update():
     user = auth.__current_user
-    if request.method == "GET":
-        employee = {
-            "firstname": user.firstname,
-            "lastname": user.lastname,
-        }
-        return render_template('dashboard/change_password.html', employee=employee)
     try:
+        if request.method == "GET":
+            employee = {
+                "firstname": user.firstname,
+                "lastname": user.lastname,
+            }
+            return render_template('dashboard/change_password.html', employee=employee)
         form_data = request.form
         kwargs = {key: form_data[key] for key in form_data}
         if auth.update_user(user.email, **kwargs):

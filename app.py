@@ -4,8 +4,8 @@ app.py
 Flask Application Entry Point
 """
 
-from flask import Flask, render_template
-from views import app_views
+from flask import Flask, render_template, request, redirect
+from views import app_views, auth
 
 app = Flask(__name__)
 app.register_blueprint(app_views)

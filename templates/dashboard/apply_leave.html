@@ -124,7 +124,6 @@
         <!-- MAIN -->
     </section>
 
-    <script src="../../static/js/user/profile.js"></script>
     <script>
         function validateAndSubmitForm(event) {
             event.preventDefault();  // Prevent the default form submission
@@ -150,34 +149,38 @@
                 return;
             }
 
-            const leaveData = {
-                fromDate: fromDate.toISOString(),
-                toDate: toDate.toISOString(),
-                leaveType: document.getElementById('leave-type').value,
-                leaveReason: document.getElementById('leave-reason').value
+            // Send the leaveData to the Flask route using Fetch API
+
+            const  formdata = new FormData();
+            formdata.append("start", fromDateInput.value);
+            formdata.append("end", toDateInput.value);
+            formdata.append("type", document.getElementById('leave-type').value);
+            formdata.append("reason", document.getElementById('leave-reason').value);
+
+            const requestOptions = {
+              method: 'POST',
+              body: formdata,
+              redirect: 'follow'
             };
 
+            fetch("/leave/apply/", requestOptions)
             // Send the leaveData to the Flask route using Fetch API
-            fetch('/leave/apply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(leaveData)
-            })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || "Something went wrong");
+                    });
                 }
                 return response.json();
             })
             .then(data => {
-                console.log(data);
-                // Redirect to confirmation page
-                window.location.href = '/user/profile';
+                alert(data.message)
+                console.log("Received data:", data);
+                window.location.href = '/leave/status';
             })
             .catch(error => {
-                console.error('Error:', error);
+                alert(`${error.message}`);
+                console.log("Fetch error:", error);
             });
         }
     </script>

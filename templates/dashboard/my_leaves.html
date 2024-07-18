@@ -110,63 +110,25 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% for item in applications %}
                         <tr>
                             <td>
                                 <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>Ciara Chiamaka</p>
+                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
                             </td>
-                            <td>01-10-2021</td>
-                            <td>01-10-2021</td>
-                            <td>0</td>
+                            <td>{{ item.start }}</td>
+                            <td>{{ item.end }}</td>
+                            <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
                             <td><span class="status pending">Pending</span></td>
                         </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>Ciara Chiamaka</p>
-                            </td>
-                            <td>01-10-2021</td>
-                            <td>01-10-2021</td>
-                            <td>0</td>
-                            <td><span class="status pending">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>Ciara Chiamaka</p>
-                            </td>
-                            <td>01-10-2021</td>
-                            <td>01-10-2021</td>
-                            <td>0</td>
-                            <td><span class="status approved">Approved</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>Ciara Chiamaka</p>
-                            </td>
-                            <td>01-10-2021</td>
-                            <td>01-10-2021</td>
-                            <td>0</td>
-                            <td><span class="status rejected">Rejected</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>Ciara Chiamaka</p>
-                            </td>
-                            <td>01-10-2021</td>
-                            <td>01-10-2021</td>
-                            <td>0</td>
-                            <td><span class="status rejected">Rejected</span></td>
-                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
 </main>
 <!-- MAIN -->
 </section>
-    <script src="../../static/js/user/profile.js"></script>
 </body>
 </html>

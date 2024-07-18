@@ -87,7 +87,7 @@
 </div>   
 <script>
     function myMenuFunction() {
-        var i = document.getElementById("navMenu");
+        const i = document.getElementById("navMenu");
         if(i.className === "nav-menu") {
             i.className += " responsive";
         } else {
@@ -95,10 +95,10 @@
         }
     }
 
-    var a = document.getElementById("loginBtn");
-    var b = document.getElementById("registerBtn");
-    var x = document.getElementById("login");
-    var y = document.getElementById("register");
+    const a = document.getElementById("loginBtn");
+    const b = document.getElementById("registerBtn");
+    const x = document.getElementById("login");
+    const y = document.getElementById("register");
 
     function showLogin() {
         x.style.left = "4px";
@@ -119,9 +119,11 @@
     }
 
     function validateForm(isLogin) {
+        let password;
+        let email;
         if (isLogin) {
-            var email = document.querySelector('#login input[type="text"]').value;
-            var password = document.querySelector('#login input[type="password"]').value;
+            email = document.querySelector('#login input[type="text"]').value;
+            password = document.querySelector('#login input[type="password"]').value;
 
             if (!email || !password) {
                 alert("Please enter both email/username and password.");
@@ -156,25 +158,25 @@
                 });
             // Send loginData to backend
         } else {
-            var firstname = document.querySelector('#register input[placeholder="Firstname"]').value;
-            var lastname = document.querySelector('#register input[placeholder="Lastname"]').value;
-            var email = document.getElementById("email").value;
-            var password = document.getElementById("password").value;
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            var specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
+            const firstname = document.querySelector('#register input[placeholder="Firstname"]').value;
+            const lastname = document.querySelector('#register input[placeholder="Lastname"]').value;
+            email = document.getElementById("email").value;
+            password = document.getElementById("password").value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
 
             if (!emailPattern.test(email)) {
                 alert("Please enter a valid email address.");
                 return false;
             }
 
-            var specialCharCount = (password.match(specialCharPattern) || []).length;
+            const specialCharCount = (password.match(specialCharPattern) || []).length;
             if (password.length < 8 || specialCharCount < 2) {
                 alert("Password must be at least 8 characters long and contain at least 2 special characters.");
                 return false;
             }
 
-            var myHeaders = new Headers();
+            const myHeaders = new Headers();
 
             const formdata = new FormData();
             formdata.append("firstname", firstname);
@@ -201,10 +203,15 @@
         return true;
     }
 
+    const err = "{{ error }}";
+    if (err) {
+        alert(err)
+    }
+
     document.querySelectorAll('.submit').forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
-            var isLogin = event.target.value === "Sign In";
+            const isLogin = event.target.value === "Sign In";
             validateForm(isLogin);
         });
     });
