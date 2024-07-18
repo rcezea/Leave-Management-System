@@ -111,7 +111,7 @@
                     </thead>
                     <tbody>
                         {% for application in applications %}
-                            <tr>
+                            <tr class="application-row" data-status="{{ application.status }}" data-leave-id="{{ application.id }}">
                                 <td>
                                     <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                     <p>{{ employee.firstname }} {{ employee.lastname }}</p>
@@ -123,15 +123,101 @@
                                         {{ application.status.capitalize() }}
                                     </span>
                                 </td>
-                        </tr>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>Do you want to cancel this pending leave request?</p>
+                <button id="cancelButton">Yes</button>
+                <button id="closeButton">No</button>
+            </div>
+        </div>
 </main>
 <!-- MAIN -->
 </section>
-    <script src="../../static/js/user/profile.js"></script>
+    <script src="../../static/js/dashboard.js"></script>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+    
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+    
+        // Get the cancel and close buttons
+        var cancelButton = document.getElementById("cancelButton");
+        var closeButton = document.getElementById("closeButton");
+    
+        // When the user clicks on a pending leave request, open the modal
+        document.querySelectorAll('.application-row').forEach(function(row) {
+            row.addEventListener('click', function() {
+                if (this.getAttribute('data-status') === 'pending') {
+                    currentLeaveId = this.getAttribute('data-leave-id');
+                    modal.style.display = "block";
+                }
+            });
+        });
+    
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        // When the user clicks on close button, close the modal
+        closeButton.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    
+        // When the user clicks on cancel button, perform the cancel action
+        cancelButton.onclick = function() {
+            if (currentLeaveId) {
+                fetch('/leave/cancel/' + currentLeaveId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrf_token') // Add CSRF token if required
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Leave request cancelled.');
+                        modal.style.display = "none";
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        alert('Failed to cancel leave request.');
+                    }
+                }).catch(error => {
+                    alert('Error: ' + error);
+                });
+            }
+        }
+
+        // Function to get CSRF token from cookies (if needed)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
 </body>
 </html>
