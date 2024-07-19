@@ -4,14 +4,20 @@ auth.py
 Authentication module
 """
 import uuid
+from os import getenv
 from typing import List
 import bcrypt
 from models.db import DB
 from models.user import User
 import redis
 from bson import ObjectId
+from dotenv import load_dotenv
 
-r = redis.Redis()
+load_dotenv()
+
+REDIS_URL = getenv("REDIS_URL")
+# Connect to Redis
+r = redis.StrictRedis.from_url(REDIS_URL)
 
 
 def _hash_password(password: str) -> bytes:

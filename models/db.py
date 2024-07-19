@@ -29,7 +29,7 @@ class DB:
 
     def __init__(self):
         mongoengine.connect(db='leave_management_system',
-                            alias='core', host=getenv('URL'))
+                            alias='core', host=getenv("URL"))
 
     def create_user(self, **kwargs):
         """ Create a new user """
