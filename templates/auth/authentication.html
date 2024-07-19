@@ -135,10 +135,13 @@
             formdata.append("email", email);
             formdata.append("password", password);
 
+            const basicAuthToken = btoa(`${email}:${password}`); // Base64 encode email:password
+
             const requestOptions = {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': "{{ csrf_token() }}",
+                    'Authorization': `Basic ${basicAuthToken}`,
+                    'X-CSRFToken': "{{ csrf_token() }}", // Replace with actual CSRF token if applicable
                 },
                 body: formdata,
                 redirect: 'follow'

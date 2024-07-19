@@ -245,20 +245,20 @@
             };
 
             fetch("/auth/logout", requestOptions)
-          .then(response => {
-              if (!response.ok) {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.error || "Something went wrong");
-                    });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
                     }
-              return response.json();
-          })
-          .then(data => {
-              alert(data.message);
-              console.log(data.message)
-              return window.location.href = '/';
-          })
-          .catch(error => console.log('error', error));
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    console.log(data.message)
+                    return window.location.href = '/';
+                })
+                .catch(error => console.log('error', error));
         }
     </script>
 </body>

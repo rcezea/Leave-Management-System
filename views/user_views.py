@@ -62,13 +62,18 @@ def register():
 @app_views.route('/auth/login', methods=['POST'], strict_slashes=False)
 def login():
     """ route user login """
-    authHeader = auth.authorization_header(request)
-    if authHeader:
-        authHeader = authHeader.split(" ")[1]
-        authHeader = base64.b64decode(authHeader).decode('utf-8')
-        authHeader = authHeader.split(":")
-    email = request.form.get("email") or authHeader[0]
-    password = request.form.get("password") or authHeader[1]
+    authHeader = request.headers.get('Authorization')
+    if authHeader and authHeader.startswith('Basic '):
+        try:
+            credentials = base64.b64decode(authHeader.split(" ")[1]).decode('utf-8')
+            email, password = credentials.split(':')
+        except (TypeError, ValueError, base64.binascii.Error):
+            return jsonify({"error": "Invalid authorization header"}), 401
+    else:
+        # Fall back to form data if Authorization header is not present
+        email = request.form.get("email")
+        password = request.form.get("password")
+
     try:
         if auth.valid_login(email, password):
             session_id = auth.create_session(email)
@@ -79,7 +84,7 @@ def login():
             resp.set_cookie(
                 "session_id", session_id, httponly=True, secure=True)
             return resp
-        return jsonify({"error": "Incorrect username or password"})
+        return jsonify({"error": "Incorrect username or password"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
