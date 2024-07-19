@@ -115,7 +115,7 @@
                             </thead>
                             <tbody>
                             {% for item in applications if item.status == 'approved' %}
-                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
                                     <td>
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ employee.firstname }} {{ employee.lastname }}</p>
@@ -148,7 +148,7 @@
                             </thead>
                             <tbody>
                             {% for item in applications if item.status == 'pending' %}
-                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
                                     <td>
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ employee.firstname }} {{ employee.lastname }}</p>
@@ -181,7 +181,7 @@
                             </thead>
                             <tbody>
                             {% for item in applications if item.status == 'rejected' %}
-                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item.id }}">
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
                                     <td>
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ employee.firstname }} {{ employee.lastname }}</p>
@@ -262,7 +262,13 @@
     // When the user clicks on cancel button, perform the cancel action
     cancelButton.onclick = function() {
             if (currentLeaveId) {
-                fetch('/leave/cancel/' + currentLeaveId, {method: 'DELETE',})
+                fetch('/leave/cancel/' + currentLeaveId,
+                    {
+                        method: 'DELETE',
+                        headers:{
+                            'X-CSRFToken': "{{ csrf_token() }}",
+                        }
+                })
                 .then(response => {
                     if (!response.ok) {
                         return response.json().then(errorData => {

@@ -137,6 +137,9 @@
 
             const requestOptions = {
                 method: 'POST',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
                 body: formdata,
                 redirect: 'follow'
             };
@@ -177,7 +180,6 @@
                 return false;
             }
 
-            const myHeaders = new Headers();
 
             const formdata = new FormData();
             formdata.append("firstname", firstname);
@@ -188,7 +190,9 @@
 
             const requestOptions = {
                 method: 'POST',
-                headers: myHeaders,
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
                 body: formdata,
                 redirect: 'follow'
             };

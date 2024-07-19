@@ -10,7 +10,6 @@ from functools import wraps
 from flask import jsonify, request, abort, make_response, redirect, render_template
 from views import app_views
 from authentication.auth import Auth
-import random
 
 auth = Auth()
 

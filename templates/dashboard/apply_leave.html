@@ -118,6 +118,7 @@
                             <button type="submit">APPLY LEAVE</button>
                             <a href="/user/profile">CANCEL</a>
                         </div>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     </form>
                 </div>
             </div>
@@ -159,11 +160,13 @@
             formdata.append("reason", document.getElementById('leave-reason').value);
 
             const requestOptions = {
-              method: 'POST',
-              body: formdata,
-              redirect: 'follow'
+                method: 'POST',
+                body: formdata,
+                redirect: 'follow',
+                headers: {
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                }
             };
-
             fetch("/leave/apply/", requestOptions)
             // Send the leaveData to the Flask route using Fetch API
             .then(response => {

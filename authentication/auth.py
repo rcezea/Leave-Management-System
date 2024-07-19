@@ -11,11 +11,13 @@ from models.db import DB
 from models.user import User
 import redis
 from bson import ObjectId
+from dotenv import load_dotenv
 
-REDIS_URL = getenv('REDIS_URL')
+load_dotenv()
 
+REDIS_URL = getenv("REDIS_URL")
 # Connect to Redis
-redis_client = redis.StrictRedis.from_url(REDIS_URL)
+r = redis.StrictRedis.from_url(REDIS_URL)
 
 
 def _hash_password(password: str) -> bytes:
