@@ -79,7 +79,7 @@ def login():
             resp.set_cookie(
                 "session_id", session_id, httponly=True, secure=True)
             return resp
-        abort(401)
+        return jsonify({"error": "Incorrect username or password"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
