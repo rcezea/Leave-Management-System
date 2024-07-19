@@ -124,7 +124,8 @@ class DB:
             raise ValueError("New password same as Old")
         if kwargs['password']:
             # encrypt possible new password
-            kwargs['password'] = _hash_password(kwargs['password']).decode('utf-8')
+            kwargs['password'] = (_hash_password(kwargs['password'])
+                                  .decode('utf-8'))
         for key, value in kwargs.items():
             if ((key != 'applications', key != 'email')
                     and hasattr(user, key)):

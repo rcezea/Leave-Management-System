@@ -52,7 +52,7 @@
                 </a>
             </li>
             <li>
-                <a href="" class="logout">
+                <a href="" class="logout" onclick="logout()">
                     <i class='bx bx-log-out-circle' ></i>
                     <span class="text">Logout</span>
                 </a>
@@ -234,5 +234,32 @@
 </section>
 
     <script src="../../static/js/dashboard.js"></script>
+    <script>
+        function logout(){
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
+                redirect: 'follow'
+            };
+
+            fetch("/auth/logout", requestOptions)
+          .then(response => {
+              if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || "Something went wrong");
+                    });
+                    }
+              return response.json();
+          })
+          .then(data => {
+              alert(data.message);
+              console.log(data.message)
+              return window.location.href = '/';
+          })
+          .catch(error => console.log('error', error));
+        }
+    </script>
 </body>
 </html>

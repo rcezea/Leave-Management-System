@@ -35,7 +35,7 @@
                 <header>Login</header>
             </div>
             <div class="input-box">
-                <input type="text" class="input-field" placeholder="Username or Email">
+                <input type="email" class="input-field" placeholder="Email" id="email">
                 <i class="bx bx-user"></i>
             </div>
             <div class="input-box">
@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="input-box">
-                <input type="text" class="input-field" placeholder="Email" id="email">
+                <input type="email" class="input-field" placeholder="Email" id="email">
                 <i class="bx bx-envelope"></i>
             </div>
             <div class="input-box">
@@ -123,7 +123,7 @@
         let password;
         let email;
         if (isLogin) {
-            email = document.querySelector('#login input[type="text"]').value;
+            email = document.querySelector('#login input[type="email"]').value;
             password = document.querySelector('#login input[type="password"]').value;
 
             if (!email || !password) {
@@ -153,8 +153,14 @@
               })
                 .then(data => {
                     // Redirect or update UI based on response
-                    window.location.href = '/user/profile'; // Redirect to another page
-
+                    alert(data.message)
+                    if (data.role === 'admin') {
+                        return window.location.href = '/admin/dashboard';
+                    }
+                    else if (data.role === 'employee'){
+                        return window.location.href = '/user/profile';
+                    }
+                    return window.location.href = '/'; // Redirect home
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -186,7 +192,6 @@
             formdata.append("lastname", lastname);
             formdata.append("email", email);
             formdata.append("password", password);
-            formdata.append("role", "employee");
 
             const requestOptions = {
                 method: 'POST',
@@ -202,7 +207,7 @@
               .then(result => console.log(result))
               .catch(error => console.log('error', error));
 
-            window.location.href = '/'
+            return window.location.href = '/'
         }
 
         return true;

@@ -4,9 +4,6 @@ leave_vies.py
 Leave processing views
 """
 import ast
-
-from mongoengine import DoesNotExist, ValidationError
-
 from views import app_views
 from flask import jsonify, request, abort, render_template
 from models.leave import LeaveManager
@@ -33,20 +30,19 @@ def apply():
                 "firstname": user.firstname,
                 "lastname": user.lastname,
             }
-            return render_template('dashboard/apply_leave.html', employee=employee)
+            return render_template('dashboard/apply_leave.html',
+                                   employee=employee)
         else:
             user = auth.__current_user
             form_data = request.form
             kwargs = {key: form_data[key] for key in form_data}
             kwargs.update(userid=user.id)
-            leave = manager.create_leave_application(user.email,
-                                                     **kwargs)
-            if leave:
-                return (jsonify({"message": "Application submitted successfuly"}),
-                        201)
+            manager.create_leave_application(user.email,
+                                             **kwargs)
+            return (jsonify({"message": "Application submitted successfuly"}),
+                    201)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-    abort(401)
 
 
 def convert_dates(application):
@@ -68,7 +64,10 @@ def status():
         user = auth.__current_user
         applications = []
         if user.applications:
-            applications = sorted([convert_dates(app) for app in user.applications], key=lambda x: ('pending', 'rejected', 'approved').index(x['status']))
+            applications = (
+                sorted([convert_dates(app)for app in user.applications],
+                       key=lambda x: ('pending', 'rejected', 'approved')
+                       .index(x['status'])))
         employee = {
             "firstname": user.firstname,
             "lastname": user.lastname,
