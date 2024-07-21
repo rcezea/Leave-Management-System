@@ -7,10 +7,9 @@ import base64
 import json
 from functools import wraps
 
-from flask import jsonify, request, abort, make_response, redirect, render_template
+from flask import jsonify, request, abort, make_response, render_template
 from views import app_views
 from authentication.auth import Auth
-import random
 
 auth = Auth()
 
@@ -63,21 +62,29 @@ def register():
 @app_views.route('/auth/login', methods=['POST'], strict_slashes=False)
 def login():
     """ route user login """
-    authHeader = auth.authorization_header(request)
-    if authHeader:
-        authHeader = authHeader.split(" ")[1]
-        authHeader = base64.b64decode(authHeader).decode('utf-8')
-        authHeader = authHeader.split(":")
-    email = request.form.get("email") or authHeader[0]
-    password = request.form.get("password") or authHeader[1]
+    authHeader = request.headers.get('Authorization')
+    if authHeader and authHeader.startswith('Basic '):
+        try:
+            credentials = base64.b64decode(authHeader.split(" ")[1]).decode('utf-8')
+            email, password = credentials.split(':')
+        except (TypeError, ValueError, base64.binascii.Error):
+            return jsonify({"error": "Invalid authorization header"}), 401
+    else:
+        # Fall back to form data if Authorization header is not present
+        email = request.form.get("email")
+        password = request.form.get("password")
+
     try:
         if auth.valid_login(email, password):
             session_id = auth.create_session(email)
-            resp = make_response(jsonify({"message": "Login successful"}), 200)
+            role = auth.get_user_from_session_id(session_id).role
+            resp = make_response(jsonify({
+                "message": "Login successful",
+                "role": role}), 200)
             resp.set_cookie(
                 "session_id", session_id, httponly=True, secure=True)
             return resp
-        abort(401)
+        return jsonify({"error": "Incorrect username or password"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -85,7 +92,7 @@ def login():
 # User Logout
 # Endpoint: POST /auth/logout
 # Description: Log out the current user.
-@app_views.route('/auth/logout', methods=['GET'], strict_slashes=False)
+@app_views.route('/auth/logout', methods=['DELETE'], strict_slashes=False)
 def logout():
     """ User logout """
     try:
@@ -93,9 +100,9 @@ def logout():
         auth.destroy_session(session_id)
         resp = jsonify({"message": "Logged out successfully"})
         resp.set_cookie("session_id", '',  # Delete the cookie
-                        expires=0, httponly=True, secure=True)
+                        expires=0, max_age=0, httponly=True, secure=True)
         auth.__current_user = None
-        return redirect('/')
+        return resp
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -104,21 +111,20 @@ def logout():
 # Endpoint: GET /user/profile
 # Description: GET user profile information.
 @app_views.route('/user/profile', methods=['GET'], strict_slashes=False)
+@role_required("employee")
 def user():
     """ implement a profile """
     user = auth.__current_user
     try:
         if not user:
             abort(401)
-        if user.role == 'admin':
-            return redirect('/admin/dashboard')
         pending = 0
         rejected = 0
         approved = 0
         if request.method == 'GET':
             applications = \
                 [convert_dates(app) for app in user.applications] \
-                    if user.applications else []
+                if user.applications else []
             total = len(applications)
             for item in applications:
                 if item["status"] == 'pending':
@@ -139,7 +145,8 @@ def user():
             }
             apply_five = applications[:5]
             # Render a different dashboard based on the role
-            return render_template('dashboard/employee_dashboard.html', employee=employee, applications=apply_five)
+            return render_template('dashboard/employee_dashboard.html',
+                                   employee=employee, applications=apply_five)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -165,7 +172,8 @@ def update():
                 "firstname": user.firstname,
                 "lastname": user.lastname,
             }
-            return render_template('dashboard/change_password.html', employee=employee)
+            return render_template('dashboard/change_password.html',
+                                   employee=employee)
         form_data = request.form
         kwargs = {key: form_data[key] for key in form_data}
         if auth.update_user(user.email, **kwargs):

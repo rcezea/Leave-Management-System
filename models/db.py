@@ -29,7 +29,7 @@ class DB:
 
     def __init__(self):
         mongoengine.connect(db='leave_management_system',
-                            alias='core', host=getenv('URL'))
+                            alias='core', host=getenv("URL"))
 
     def create_user(self, **kwargs):
         """ Create a new user """
@@ -124,7 +124,8 @@ class DB:
             raise ValueError("New password same as Old")
         if kwargs['password']:
             # encrypt possible new password
-            kwargs['password'] = _hash_password(kwargs['password']).decode('utf-8')
+            kwargs['password'] = (_hash_password(kwargs['password'])
+                                  .decode('utf-8'))
         for key, value in kwargs.items():
             if ((key != 'applications', key != 'email')
                     and hasattr(user, key)):

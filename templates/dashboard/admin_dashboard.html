@@ -56,7 +56,7 @@
                 </a>
             </li>
             <li>
-                <a href="" class="logout">
+                <a href="" class="logout" onclick="logout()">
                     <i class='bx bx-log-out-circle' ></i>
                     <span class="text">Logout</span>
                 </a>
@@ -244,6 +244,33 @@
         window.addEventListener("load", function() {
             loader.style.display = "none";
         });
+        function logout(){
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
+                redirect: 'follow'
+            };
+
+            fetch("/auth/logout", requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data.message)
+                    return window.location.href = '/';
+                })
+                .catch(error => console.log('error', error));
+           loader.style.display = "none";
+        }
     </script>
 </body>
 </html>

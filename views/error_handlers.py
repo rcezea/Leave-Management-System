@@ -4,7 +4,7 @@ error_handlers.py
 Error handling views
 """
 from views import app_views
-from flask import abort, request, render_template
+from flask import abort, request, render_template, redirect
 from views.user_views import auth
 
 
@@ -53,7 +53,7 @@ def authenticate_user():
                 abort(401)
             auth.__current_user = auth.current_user(request)
             if auth.__current_user is None:
-                abort(401)
+                return redirect('/')
 
 
 @app_views.after_request

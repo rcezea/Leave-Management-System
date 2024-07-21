@@ -3,8 +3,7 @@
 leave_vies.py
 Leave processing views
 """
-from mongoengine import DoesNotExist, ValidationError
-
+import ast
 from views import app_views
 from flask import jsonify, request, abort, render_template
 from models.leave import LeaveManager
@@ -31,20 +30,19 @@ def apply():
                 "firstname": user.firstname,
                 "lastname": user.lastname,
             }
-            return render_template('dashboard/apply_leave.html', employee=employee)
+            return render_template('dashboard/apply_leave.html',
+                                   employee=employee)
         else:
             user = auth.__current_user
             form_data = request.form
             kwargs = {key: form_data[key] for key in form_data}
             kwargs.update(userid=user.id)
-            leave = manager.create_leave_application(user.email,
-                                                     **kwargs)
-            if leave:
-                return (jsonify({"message": "Application submitted successfuly"}),
-                        201)
+            manager.create_leave_application(user.email,
+                                             **kwargs)
+            return (jsonify({"message": "Application submitted successfuly"}),
+                    201)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-    abort(401)
 
 
 def convert_dates(application):
@@ -64,14 +62,18 @@ def status():
     """ View leave application status """
     try:
         user = auth.__current_user
-        applications = manager.get_all_applications_by_user(user.id)
-        applications_list = [convert_dates(app) for app in applications]
-        employee ={
+        applications = []
+        if user.applications:
+            applications = (
+                sorted([convert_dates(app)for app in user.applications],
+                       key=lambda x: ('pending', 'rejected', 'approved')
+                       .index(x['status'])))
+        employee = {
             "firstname": user.firstname,
             "lastname": user.lastname,
         }
         return render_template('dashboard/my_leaves.html',
-                               applications=applications_list, employee=employee,
+                               applications=applications, employee=employee,
                                datetime=datetime, date=date)
         # return jsonify({"leave_applications": applications_list})
     except Exception as e:
@@ -87,6 +89,9 @@ def status():
 def cancel_leave(leave_id):
     """ Cancel a pending leave application """
     try:
+        data_dict = ast.literal_eval(leave_id.replace("'", "\""))
+        leave_id = data_dict['$oid']
+        print(leave_id)
         user = auth.__current_user
         if manager.delete_leave(user, leave_id):
             return jsonify({"message": "Application "

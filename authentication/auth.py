@@ -4,14 +4,20 @@ auth.py
 Authentication module
 """
 import uuid
+from os import getenv
 from typing import List
 import bcrypt
 from models.db import DB
 from models.user import User
 import redis
 from bson import ObjectId
+from dotenv import load_dotenv
 
-r = redis.Redis()
+load_dotenv()
+
+REDIS_URL = getenv("REDIS_URL")
+# Connect to Redis
+r = redis.StrictRedis.from_url(REDIS_URL)
 
 
 def _hash_password(password: str) -> bytes:
@@ -64,7 +70,8 @@ class Auth:
         try:
             if self._db.find_user_by(email=email):
                 raise ValueError("Email already registered")
-            kwargs["password"] = _hash_password(kwargs["password"]).decode('utf-8')
+            kwargs["password"] = (_hash_password(kwargs["password"])
+                                  .decode('utf-8'))
             return self._db.create_user(**kwargs)
         except Exception as e:
             raise Exception(f"Error registering user {email}: {str(e)}")

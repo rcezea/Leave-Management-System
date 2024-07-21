@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="../../static/css/loader.css">
     <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
-    <title>Leave Management</title>
+    <title>LMS | Dashboard</title>
 </head>
 <body>
     <div id="preloader" class="loader-container">
@@ -52,7 +52,7 @@
 
             <ul class="side-menu">
             <li>
-                <a href="/auth/logout" class="logout">
+                <a href="" class="logout" onclick="logout()">
                     <i class='bx bx-log-out-circle' ></i>
                     <span class="text">Logout</span>
                 </a>
@@ -104,37 +104,233 @@
                     <i class='bx bx-search' ></i>
                     <i class='bx bx-filter' ></i>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
-                            <th>Days</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in applications %}
-                        <tr>
-                            <td>
-                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
-                            </td>
-                            <td>{{ item.start }}</td>
-                            <td>{{ item.end }}</td>
-                            <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
-                            <td><span class="status pending">Pending</span></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('approved-section')">Approved</div>
+                    <div id="approved-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'approved' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status approved">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('pending-section')">Pending</div>
+                    <div id="pending-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'pending' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status pending">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        
+                <div class="status-section">
+                    <div class="status-toggle" onclick="toggleSection('rejected-section')">Rejected</div>
+                    <div id="rejected-section" class="status-pane">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>From Date</th>
+                                    <th>To Date</th>
+                                    <th>Days</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in applications if item.status == 'rejected' %}
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
+                                    <td>
+                                        <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                        <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                    </td>
+                                    <td>{{ item.start }}</td>
+                                    <td>{{ item.end }}</td>
+                                    <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
+                                    <td>
+                                        <span class="status rejected">{{ item.status.capitalize() }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Do you want to cancel this pending leave request?</p>
+            <button id="cancelButton">Yes, cancel</button>
+            <button id="closeButton">No, close</button>
         </div>
     </div>
 </main>
 <!-- MAIN -->
 </section>
+<script src="../../static/js/dashboard.js"></script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // Get the cancel and close buttons
+    var cancelButton = document.getElementById("cancelButton");
+    var closeButton = document.getElementById("closeButton");
+
+    // Variable to store the current leave_id
+    var currentLeaveId = null;
+
+    // When the user clicks on a pending leave request, open the modal and store the leave_id
+    document.querySelectorAll('.application-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            if (this.getAttribute('data-status') === 'pending') {
+                currentLeaveId = this.getAttribute('data-leave-id');
+                modal.style.display = "block";
+            }
+        });
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+        currentLeaveId = null;
+    }
+
+    // When the user clicks on close button, close the modal
+    closeButton.onclick = function() {
+        modal.style.display = "none";
+        currentLeaveId = null;
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            currentLeaveId = null;
+        }
+    }
+
+    // When the user clicks on cancel button, perform the cancel action
+    cancelButton.onclick = function() {
+            if (currentLeaveId) {
+                fetch('/leave/cancel/' + currentLeaveId,
+                    {
+                        method: 'DELETE',
+                        headers:{
+                            'X-CSRFToken': "{{ csrf_token() }}",
+                        }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
+                    }
+                    modal.style.display = "none";
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message)
+                    console.log("Received data:", data);
+                    location.reload(); // Reload the page to reflect the changes
+                })
+                .catch(error => {
+                    alert(`${error.message}`);
+                    console.log("Fetch error:", error);
+                });
+            }
+        }
+        function toggleSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+</script>
+<script>
+        function logout(){
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
+                redirect: 'follow'
+            };
+
+            fetch("/auth/logout", requestOptions)
+              .then(response => {
+                  if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
+                        }
+                  return response.json();
+              })
+              .then(data => {
+                  console.log(data.message)
+                  return window.location.href = '/';
+              })
+              .catch(error => console.log('error', error));
+          loader.style.display = "none";
+        }
+</script>
 </body>
 
 <script>
