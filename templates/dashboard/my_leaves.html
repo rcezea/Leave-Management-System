@@ -7,10 +7,14 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="../../static/css/loader.css">
     <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
     <title>LMS | Dashboard</title>
 </head>
 <body>
+    <div id="preloader" class="loader-container">
+        <div class="loader"></div>
+    </div>
         <!-- SIDEBAR -->
     <section id="sidebar">
         <a href="#" class="brand">
@@ -300,6 +304,8 @@
 </script>
 <script>
         function logout(){
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
             const requestOptions = {
                 method: 'DELETE',
                 headers: {
@@ -309,21 +315,29 @@
             };
 
             fetch("/auth/logout", requestOptions)
-          .then(response => {
-              if (!response.ok) {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.error || "Something went wrong");
-                    });
-                    }
-              return response.json();
-          })
-          .then(data => {
-              alert(data.message);
-              console.log(data.message)
-              return window.location.href = '/';
-          })
-          .catch(error => console.log('error', error));
+              .then(response => {
+                  if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
+                        }
+                  return response.json();
+              })
+              .then(data => {
+                  console.log(data.message)
+                  return window.location.href = '/';
+              })
+              .catch(error => console.log('error', error));
+          loader.style.display = "none";
         }
 </script>
 </body>
+
+<script>
+    const loader = document.getElementById("preloader");
+
+    window.addEventListener("load", function() {
+        loader.style.display = "none";
+    });
+</script>
 </html>

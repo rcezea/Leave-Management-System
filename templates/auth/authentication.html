@@ -9,239 +9,246 @@
     <link rel="stylesheet" href="../../static/css/normalize.css">
     <link rel="stylesheet" href="../../static/css/authentication.css">
     <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
+    <link rel="stylesheet" href="../../static/css/loader.css">
     <title>LMS | Login and Registration</title>
 </head>
 <body>
- <div class="wrapper">
-    <nav class="nav">
-        <div class="nav-logo">
-            <p>Leave Management System</p>
-        </div>
-        <div class="nav-button">
-            <button class="btn white-btn" id="loginBtn" onclick="showLogin()">Login</button>
-            <button class="btn" id="registerBtn" onclick="showRegister()">Sign Up</button>
-        </div>
-        <div class="nav-menu-btn">
-            <i class="bx bx-menu" onclick="myMenuFunction()"></i>
-        </div>
-    </nav>
-<!----------------------------- Form box ----------------------------------->    
-    <div class="form-box">
-        
-        <!------------------- login form -------------------------->
-        <div class="login-container" id="login">
-            <div class="top">
-                <span>Don't have an account? <a href="#" onclick="showRegister()">Sign Up</a></span>
-                <header>Login</header>
+    <div id="preloader" class="loader-container">
+        <div class="loader"></div>
+    </div>
+    <div class="wrapper">
+        <nav class="nav">
+            <div class="nav-logo">
+              <p>Leave Management System</p>
             </div>
-            <div class="input-box">
-                <input type="email" class="input-field" placeholder="Email" id="email">
-                <i class="bx bx-user"></i>
+            <div class="nav-button">
+                <button class="btn white-btn" id="loginBtn" onclick="showLogin()">Login</button>
+                <button class="btn" id="registerBtn" onclick="showRegister()">Sign Up</button>
             </div>
-            <div class="input-box">
-                <input type="password" class="input-field" placeholder="Password">
-                <i class="bx bx-lock-alt"></i>
+            <div class="nav-menu-btn">
+                <i class="bx bx-menu" onclick="myMenuFunction()"></i>
             </div>
-            <div class="input-box">
-                <input type="submit" class="submit" value="Sign In">
-            </div>
-            <div class="one-col">
-                <div class="one">
-                    <label><a href="#">Forgot password?</a></label>
+        </nav>
+        <div class="form-box">
+            <div class="login-container" id="login">
+                <div class="top">
+                    <span>Don't have an account? <a href="#" onclick="showRegister()">Sign Up</a></span>
+                    <header>Login</header>
                 </div>
-            </div>
-        </div>
-        <!------------------- registration form -------------------------->
-        <div class="register-container" id="register">
-            <div class="top">
-                <span>Have an account? <a href="#" onclick="showLogin()">Login</a></span>
-                <header>Sign Up</header>
-            </div>
-            <div class="two-forms">
                 <div class="input-box">
-                    <input type="text" class="input-field" placeholder="Firstname">
+                    <input type="text" class="input-field" placeholder="Username or Email">
                     <i class="bx bx-user"></i>
                 </div>
                 <div class="input-box">
-                    <input type="text" class="input-field" placeholder="Lastname">
-                    <i class="bx bx-user"></i>
+                    <input type="password" class="input-field" placeholder="Password">
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="input-box">
+                    <input type="submit" class="submit" value="Sign In">
+                </div>
+                <div class="one-col">
+                    <div class="one">
+                        <label><a href="#">Forgot password?</a></label>
+                    </div>
                 </div>
             </div>
-            <div class="input-box">
-                <input type="email" class="input-field" name="new-email" placeholder="Email">
-                <i class="bx bx-envelope"></i>
-            </div>
-            <div class="input-box">
-                <input type="password" class="input-field" placeholder="Password" id="password">
-                <i class="bx bx-lock-alt"></i>
-            </div>
-            <div class="input-box">
-                <input type="submit" class="submit" value="Register">
-            </div>
-            <div class="one-col">
-                <div class="one">
-                    <label><a href="#">Terms & Conditions</a></label>
+            <div class="register-container" id="register">
+                <div class="top">
+                    <span>Have an account? <a href="#" onclick="showLogin()">Login</a></span>
+                    <header>Sign Up</header>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <input type="text" class="input-field" placeholder="Firstname">
+                        <i class="bx bx-user"></i>
+                    </div>
+                    <div class="input-box">
+                        <input type="text" class="input-field" placeholder="Lastname">
+                        <i class="bx bx-user"></i>
+                    </div>
+                </div>
+                <div class="input-box">
+                    <input type="text" class="input-field" placeholder="Email" id="email">
+                    <i class="bx bx-envelope"></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" class="input-field" placeholder="Password" id="password">
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="input-box">
+                    <input type="submit" class="submit" value="Register">
+                </div>
+                <div class="one-col">
+                    <div class="one">
+                        <label><a href="#">Terms & Conditions</a></label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>   
-<script>
-    function myMenuFunction() {
-        const i = document.getElementById("navMenu");
-        if(i.className === "nav-menu") {
-            i.className += " responsive";
-        } else {
-            i.className = "nav-menu";
+
+    <!-- Add the popup message container -->
+    <div id="popup-message" class="popup-message"></div>
+
+    <script>
+        function showPopupMessage(message, isSuccess = false) {
+            const popupMessage = document.getElementById('popup-message');
+            popupMessage.textContent = message;
+            popupMessage.className = 'popup-message';
+            if (isSuccess) {
+                popupMessage.classList.add('success');
+            }
+            popupMessage.style.display = 'block';
+            setTimeout(() => {
+                popupMessage.style.display = 'none';
+            }, 3000); // Hide the message after 3 seconds
         }
-    }
-
-    const a = document.getElementById("loginBtn");
-    const b = document.getElementById("registerBtn");
-    const x = document.getElementById("login");
-    const y = document.getElementById("register");
-
-    function showLogin() {
-        x.style.left = "4px";
-        y.style.right = "-520px";
-        a.className += " white-btn";
-        b.className = "btn";
-        x.style.opacity = 1;
-        y.style.opacity = 0;
-    }
-
-    function showRegister() {
-        x.style.left = "-510px";
-        y.style.right = "5px";
-        a.className = "btn";
-        b.className += " white-btn";
-        x.style.opacity = 0;
-        y.style.opacity = 1;
-    }
-
-    function validateForm(isLogin) {
-        let password;
-        let email;
-        if (isLogin) {
-            email = document.querySelector('#login input[type="email"]').value;
-            password = document.querySelector('#login input[type="password"]').value;
-
-            if (!email || !password) {
-                alert("Please enter both email/username and password.");
-                return false;
+        function myMenuFunction() {
+            const i = document.getElementById("navMenu");
+            if (i.className === "nav-menu") {
+                i.className += " responsive";
+            } else {
+                i.className = "nav-menu";
             }
-
-            const formdata = new FormData();
-            formdata.append("email", email);
-            formdata.append("password", password);
-
-            const basicAuthToken = btoa(`${email}:${password}`); // Base64 encode email:password
-
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Basic ${basicAuthToken}`,
-                    'X-CSRFToken': "{{ csrf_token() }}", // Replace with actual CSRF token if applicable
-                },
-                body: formdata,
-                redirect: 'follow'
-            };
-
-            fetch("/auth/login", requestOptions)
-              .then(response => {
-                  if (!response.ok) {
-                        return response.json().then(errorData => {
-                            throw new Error(errorData.error || "Something went wrong");
-                        });
-                  }
-                  return response.json();
-              })
-                .then(data => {
-                    // Redirect or update UI based on response
-                    alert(data.message)
-                    if (data.role === 'admin') {
-                        return window.location.href = '/admin/dashboard';
-                    }
-                    else if (data.role === 'employee'){
-                        return window.location.href = '/user/profile';
-                    }
-                    return window.location.href = '/'; // Redirect home
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Login failed: ' + error.message);
-                });
-            // Send loginData to backend
-        } else {
-            const firstname = document.querySelector('#register input[placeholder="Firstname"]').value;
-            const lastname = document.querySelector('#register input[placeholder="Lastname"]').value;
-            email = document.querySelector('#register input[name="new-email"]').value;
-            password = document.getElementById("password").value;
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
-
-            if (!emailPattern.test(email)) {
-                alert("Please enter a valid email address.");
-                return false;
-            }
-
-            const specialCharCount = (password.match(specialCharPattern) || []).length;
-            if (password.length < 8 || specialCharCount < 2) {
-                alert("Password must be at least 8 characters long and contain at least 2 special characters.");
-                return false;
-            }
-
-
-            const formdata = new FormData();
-            formdata.append("firstname", firstname);
-            formdata.append("lastname", lastname);
-            formdata.append("email", email);
-            formdata.append("password", password);
-
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': "{{ csrf_token() }}",
-                },
-                body: formdata,
-                redirect: 'follow'
-            };
-
-            fetch("/auth/register", requestOptions)
-              .then(response => {
-                  if (!response.ok) {
-                        return response.json().then(errorData => {
-                            throw new Error(errorData.error || "Something went wrong");
-                        });
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  alert(data.message);
-                  console.log(data);
-                  return window.location.href = '/';
-              })
-              .catch(error => {
-                  alert(error);
-                  console.log('error', error);
-              });
         }
 
-        return true;
-    }
+        const a = document.getElementById("loginBtn");
+        const b = document.getElementById("registerBtn");
+        const x = document.getElementById("login");
+        const y = document.getElementById("register");
 
-    const err = "{{ error }}";
-    if (err) {
-        alert(err)
-    }
+        function showLogin() {
+            x.style.left = "4px";
+            y.style.right = "-520px";
+            a.className += " white-btn";
+            b.className = "btn";
+            x.style.opacity = 1;
+            y.style.opacity = 0;
+        }
 
-    document.querySelectorAll('.submit').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const isLogin = event.target.value === "Sign In";
-            validateForm(isLogin);
+        function showRegister() {
+            x.style.left = "-510px";
+            y.style.right = "5px";
+            a.className = "btn";
+            b.className += " white-btn";
+            x.style.opacity = 0;
+            y.style.opacity = 1;
+        }
+
+        function validateForm(isLogin) {
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
+            let password;
+            let email;
+            if (isLogin) {
+                email = document.querySelector('#login input[type="text"]').value;
+                password = document.querySelector('#login input[type="password"]').value;
+
+                if (!email || !password) {
+                    showPopupMessage("Please enter both email/username and password.");
+                    loader.style.display = "none";
+                    return false;
+                }
+
+                const formdata = new FormData();
+                formdata.append("email", email);
+                formdata.append("password", password);
+
+                const requestOptions = {
+                    method: 'POST',
+                    body: formdata,
+                    redirect: 'follow'
+                };
+
+                fetch("/auth/login", requestOptions)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Login failed');
+                    })
+                    .then(data => {
+                        // Redirect or update UI based on response
+                        window.location.href = '/user/profile'; // Redirect to another page
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showPopupMessage('Login failed: ' + error.message);
+                    })
+                    .finally(() => {
+                        loader.style.display = "none";
+                    });
+
+            } else {
+                const firstname = document.querySelector('#register input[placeholder="Firstname"]').value;
+                const lastname = document.querySelector('#register input[placeholder="Lastname"]').value;
+                email = document.getElementById("email").value;
+                password = document.getElementById("password").value;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
+
+                if (!emailPattern.test(email)) {
+                    showPopupMessage("Please enter a valid email address.");
+                    loader.style.display = "none";
+                    return false;
+                }
+
+                const specialCharCount = (password.match(specialCharPattern) || []).length;
+                if (password.length < 8 || specialCharCount < 2) {
+                    showPopupMessage("Password must be at least 8 characters long and contain at least 2 special characters.");
+                    loader.style.display = "none";
+                    return false;
+                }
+
+                const formdata = new FormData();
+                formdata.append("firstname", firstname);
+                formdata.append("lastname", lastname);
+                formdata.append("email", email);
+                formdata.append("password", password);
+                formdata.append("role", "employee");
+
+                const requestOptions = {
+                    method: 'POST',
+                    body: formdata,
+                    redirect: 'follow'
+                };
+
+                fetch("/auth/register", requestOptions)
+                    .then(response => response.text())
+                    .then(result => {
+                        console.log(result);
+                        showPopupMessage('Registration successful!', true);
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                        showPopupMessage('Registration failed: ' + error.message);
+                    })
+                    .finally(() => {
+                        loader.style.display = "none";
+                    });
+            }
+            return true;
+        }
+
+        document.querySelectorAll('.submit').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const isLogin = event.target.value === "Sign In";
+                validateForm(isLogin);
+            });
         });
-    });
-</script>
+
+        window.addEventListener('load', function() {
+            document.getElementById("preloader").style.display = "none";
+        });
+
+        const err = "{{ error }}";
+        if (err) {
+            showPopupMessage(err);
+        }
+    </script>
 </body>
 </html>
