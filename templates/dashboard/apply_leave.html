@@ -7,9 +7,14 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="../../static/css/loader.css">
+    <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
     <title>Leave Management</title>
 </head>
 <body>
+    <div id="preloader" class="loader-container">
+        <div class="loader"></div>
+    </div>
         <!-- SIDEBAR -->
     <section id="sidebar">
         <a href="#" class="brand">
@@ -123,9 +128,24 @@
         </main>
         <!-- MAIN -->
     </section>
+    <div id="popup-message" class="popup-message"></div>
 
     <script>
+        function showPopupMessage(message, isSuccess = false) {
+            const popupMessage = document.getElementById('popup-message');
+            popupMessage.textContent = message;
+            popupMessage.className = 'popup-message';
+            if (isSuccess) {
+                popupMessage.classList.add('success');
+            }
+            popupMessage.style.display = 'block';
+            setTimeout(() => {
+                popupMessage.style.display = 'none';
+            }, 3000); // Hide the message after 3 seconds
+        }
         function validateAndSubmitForm(event) {
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
             event.preventDefault();  // Prevent the default form submission
 
             const fromDateInput = document.getElementById('from-date');
@@ -145,7 +165,7 @@
             const toDate = new Date(toDateInput.value);
 
             if (!isValidDate(fromDateInput.value) || !isValidDate(toDateInput.value) || calculateDays(fromDate, toDate) <= 0) {
-                alert('Please enter valid dates. To Date must be after From Date.');
+                showPopupMessage('Please enter valid dates. To Date must be after From Date.');
                 return;
             }
 
@@ -174,15 +194,23 @@
                 return response.json();
             })
             .then(data => {
-                alert(data.message)
                 console.log("Received data:", data);
                 window.location.href = '/leave/status';
             })
             .catch(error => {
-                alert(`${error.message}`);
+                showPopupMessage(`${error.message}`);
                 console.log("Fetch error:", error);
             });
+            loader.style.display = "none";
         }
     </script>
+    <script>
+        var loader = document.getElementById("preloader");
+    
+        window.addEventListener("load", function() {
+            loader.style.display = "none";
+        });
+    </script>
+    <script src="../../static/js/dashboard.js"></script>
 </body>
 </html>

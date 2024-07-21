@@ -6,9 +6,13 @@
     <link rel="stylesheet" href="../../static/css/admin_dashboard.css">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
+    <link rel="stylesheet" href="../../static/css/loader.css">
     <title>LMS | Admin</title>
 </head>
 <body>
+    <div id="preloader" class="loader-container">
+        <div class="loader"></div>
+    </div>
     <!-- SIDEBAR -->
     <section id="sidebar">
         <a href="#" class="brand">
@@ -234,5 +238,12 @@
 </section>
 
     <script src="../../static/js/dashboard.js"></script>
+    <script>
+        var loader = document.getElementById("preloader");
+    
+        window.addEventListener("load", function() {
+            loader.style.display = "none";
+        });
+    </script>
 </body>
 </html>
