@@ -154,8 +154,14 @@
                 formdata.append("email", email);
                 formdata.append("password", password);
 
+                const basicAuthToken = btoa(`${email}:${password}`);
+
                 const requestOptions = {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${basicAuthToken}`,
+                        'X-CSRFToken': "{{ csrf_token() }}",
+                    },
                     body: formdata,
                     redirect: 'follow'
                 };
@@ -168,8 +174,13 @@
                         throw new Error('Login failed');
                     })
                     .then(data => {
-                        // Redirect or update UI based on response
-                        window.location.href = '/user/profile'; // Redirect to another page
+                        if (data.role === 'admin') {
+                            return window.location.href = '/admin/dashboard';
+                        }
+                        else if (data.role === 'employee'){
+                            return window.location.href = '/user/profile';
+                        }
+                        return window.location.href = '/';
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -205,16 +216,25 @@
                 formdata.append("lastname", lastname);
                 formdata.append("email", email);
                 formdata.append("password", password);
-                formdata.append("role", "employee");
 
                 const requestOptions = {
                     method: 'POST',
+                    headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                    },
                     body: formdata,
                     redirect: 'follow'
                 };
 
                 fetch("/auth/register", requestOptions)
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                throw new Error(errorData.error || "Something went wrong");
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(result => {
                         console.log(result);
                         showPopupMessage('Registration successful!', true);
