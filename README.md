@@ -515,3 +515,9 @@ Webstack - Portfolio Project
     ```
 
   - **Errors**: None expected.
+  - ** Preview**:
+<div style="display:flex">
+     <div style="flex:1;padding-left:10px;">
+          <img src="https://github.com/rcezea/Leave-Management-System/blob/57c5e41dd64853be74e2e366ccad7b3c7fe929c9/github%20background%20image/imagee.jpeg" width="800"/>
+     </div>
+</div>
