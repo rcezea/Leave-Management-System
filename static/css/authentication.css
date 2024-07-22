@@ -68,6 +68,7 @@ header{
   width: 100%;
   padding: 0 10px 0 45px;
   border: none;
+  border-width: 1px;
   border-radius: 30px;
   outline: none;
   transition: .2s ease;
@@ -120,6 +121,7 @@ header{
 .one label a:hover{
   text-decoration: underline;
 }
+
 @media only screen and (max-width: 786px){
   .nav-button{
       display: none;

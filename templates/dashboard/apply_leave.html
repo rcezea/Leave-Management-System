@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="../../static/css/loader.css">
+    <link rel="stylesheet" href="../../static/css/errors.css">
     <link rel="icon" type="image/x-icon" href="../../static/img/favicon.png">
     <title>LMS | Dashboard</title>
 </head>
@@ -101,10 +102,12 @@
                         <div class="form-group">
                             <label for="from-date">From Date:</label>
                             <input type="date" id="from-date" name="fromDate" required>
+                            <p class="error-message">From Date should be before To Date</p>
                         </div>
                         <div class="form-group">
                             <label for="to-date">To Date:</label>
                             <input type="date" id="to-date" name="toDate" required>
+                            <p class="error-message">To Date should be after From Date</p>
                         </div>
                         <div class="form-group">
                             <label for="leave-type">Leave Type:</label>
@@ -113,6 +116,7 @@
                                 <option value="vacation">Vacation Leave</option>
                                 <option value="emergency">Emergency Leave</option>
                             </select>
+                            <p class="error-message">Please select a leave type</p>
                         </div>
                         <div class="form-group">
                             <label for="leave-reason">Leave Reason:</label>
@@ -132,23 +136,40 @@
     <div id="popup-message" class="popup-message"></div>
     <script src="../../static/js/dashboard.js"></script>
     <script>
-        function showPopupMessage(message, isSuccess = false) {
-            const popupMessage = document.getElementById('popup-message');
-            popupMessage.textContent = message;
-            popupMessage.className = 'popup-message';
-            if (isSuccess) {
-                popupMessage.classList.add('success');
+        function addErrorToNthDateInput(n) {
+            const formGroup = document.querySelector(`.form-group:nth-child(${n})`);
+            
+            if (formGroup) {
+                const dateInput = formGroup.querySelector('input[type="date"]');
+                if (dateInput) {
+                    dateInput.classList.add('error-border');
+                }
+                const errorMessage = formGroup.querySelector('.error-message');
+                if (errorMessage) {
+                    errorMessage.style.display = 'block';
+                }
             }
-            popupMessage.style.display = 'block';
-            setTimeout(() => {
-                popupMessage.style.display = 'none';
-            }, 3000); // Hide the message after 3 seconds
+        }
+        function removeErrorFromNthDateInput(n) {
+            const formGroup = document.querySelector(`.form-group:nth-child(${n})`);
+            
+            if (formGroup) {
+                const dateInput = formGroup.querySelector('input[type="date"]');
+                if (dateInput) {
+                    dateInput.classList.remove('error-border');
+                }
+                const errorMessage = formGroup.querySelector('.error-message');
+                if (errorMessage) {
+                    errorMessage.style.display = 'none';
+                }
+            }
         }
         function validateAndSubmitForm(event) {
             const loader = document.getElementById("preloader");
             loader.style.display = "flex";
             event.preventDefault();  // Prevent the default form submission
-
+            removeErrorFromNthDateInput(1);
+            removeErrorFromNthDateInput(2);
             const fromDateInput = document.getElementById('from-date');
             const toDateInput = document.getElementById('to-date');
 
@@ -166,7 +187,9 @@
             const toDate = new Date(toDateInput.value);
 
             if (!isValidDate(fromDateInput.value) || !isValidDate(toDateInput.value) || calculateDays(fromDate, toDate) <= 0) {
-                showPopupMessage('Please enter valid dates. To Date must be after From Date.');
+                addErrorToNthDateInput(1)
+                addErrorToNthDateInput(2)
+                loader.style.display = "none";
                 return;
             }
 
