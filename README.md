@@ -64,7 +64,7 @@ Webstack - Portfolio Project
   - **Format**: JSON
     ```json
     {
-      "message": "Login successful",
+      "message": "Login successful"
     }
     ```
 
@@ -307,9 +307,7 @@ Webstack - Portfolio Project
 
   - **Errors**:
     - Raise error if the leave application is not found or is not in a pending state.
-    -
-
- Return 404 status code for not found errors.
+    - Return 404 status code for not found errors.
 
 #### Reject Leave
 - **Endpoint**: `PUT /admin/reject-leave/<leave_id>`
@@ -360,7 +358,7 @@ Webstack - Portfolio Project
           "start_date": "2024-07-01",
           "end_date": "2024-07-05",
           "reason": "Medical treatment",
-          "status": false,
+          "status": "approved",
           "employee_id": "60f7cae51c4ae45d3c5f3a1c"
         }
       ]
@@ -372,7 +370,6 @@ Webstack - Portfolio Project
     - Return 404 status code for not found errors.
 
 ### Common Endpoints
-
 
 #### View Leave Balance
 - **Endpoint**: `GET /leave/balance`
@@ -518,4 +515,3 @@ Webstack - Portfolio Project
     ```
 
   - **Errors**: None expected.
-  - 
