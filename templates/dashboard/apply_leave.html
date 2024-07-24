@@ -130,6 +130,13 @@
                     </form>
                 </div>
             </div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <p id="error-message">Do you want to cancel this pending leave request?</p>
+                    <button id="cancelButton">Try again</button>
+                    <button id="closeButton">Go home</button>
+                </div>
+            </div>
         </main>
         <!-- MAIN -->
     </section>
@@ -162,6 +169,17 @@
                 if (errorMessage) {
                     errorMessage.style.display = 'none';
                 }
+            }
+        }
+        function displayErrorMessage() {
+            const errorMessageDiv = document.getElementById('error-message');
+            const errorMessage = sessionStorage.getItem('error');
+
+            if (errorMessage) {
+                errorMessageDiv.textContent = errorMessage;
+                errorMessageDiv.style.display = 'block';
+                // Clear the error from session storage after displaying it
+                sessionStorage.removeItem('error');
             }
         }
         function validateAndSubmitForm(event) {
@@ -224,11 +242,12 @@
                 window.location.href = '/leave/status';
             })
             .catch(error => {
-                showPopupMessage(`${error.message}`);
+                sessionStorage.setItem('error', error.message);
                 console.log("Fetch error:", error);
             });
             loader.style.display = "none";
         }
+        window.onload = displayErrorMessage;
     </script>
     <script>
         var loader = document.getElementById("preloader");
@@ -236,35 +255,52 @@
         window.addEventListener("load", function() {
             loader.style.display = "none";
         });
-    </script>
-        <script>
-            function logout(){
-                const loader = document.getElementById("preloader");
-                loader.style.display = "flex";
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': "{{ csrf_token() }}",
-                    },
-                    redirect: 'follow'
-                };
 
-                fetch("/auth/logout", requestOptions)
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(errorData => {
-                                throw new Error(errorData.error || "Something went wrong");
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log(data.message)
-                        return window.location.href = '/';
-                    })
-                    .catch(error => console.log('error', error));
-                loader.style.display = "none";
+        closeButton.onclick = function() {
+            return window.location.href = '/user/profile';
+        }
+
+        cancelButton.onclick = function() {
+            modal.style.display = "none";
+            currentLeaveId = null;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                currentLeaveId = null;
             }
-        </script>
+        }
+
+    </script>
+    <script>
+        function logout(){
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': "{{ csrf_token() }}",
+                },
+                redirect: 'follow'
+            };
+
+            fetch("/auth/logout", requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Something went wrong");
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data.message)
+                    return window.location.href = '/';
+                })
+                .catch(error => console.log('error', error));
+            loader.style.display = "none";
+        }
+    </script>
 </body>
 </html>
