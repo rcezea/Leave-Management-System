@@ -184,10 +184,13 @@
 
                 fetch("/auth/login", requestOptions)
                     .then(response => {
-                        if (response.ok) {
-                            return response.json();
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                console.log(errorData)
+                                throw new Error(errorData.error || "Something went wrong");
+                            });
                         }
-                        throw new Error('Login failed');
+                        return response.json();
                     })
                     .then(data => {
                         if (data.role === 'admin') {
@@ -199,7 +202,7 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        showError("login-email", 'Login failed: ' + error.message);
+                        showError("login-email", error.message);
                     })
                     .finally(() => {
                         loader.style.display = "none";

@@ -242,7 +242,7 @@
                 window.location.href = '/leave/status';
             })
             .catch(error => {
-                sessionStorage.setItem('error', error.message);
+                alert(`${error.message}`);
                 console.log("Fetch error:", error);
             });
             loader.style.display = "none";
