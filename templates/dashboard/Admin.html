@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../static/css/extra.css">
+    <link rel="stylesheet" href="../../static/css/loader.css">
     <link rel="stylesheet" href="../../static/css/admin_dashboard.css">
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 
@@ -208,8 +209,8 @@
 <script src="../../static/js/dashboard.js"></script>
 <script>
         function logout(){
-            {#const loader = document.getElementById("preloader");#}
-            {#loader.style.display = "flex";#}
+            const loader = document.getElementById("preloader");
+            loader.style.display = "flex";
             const requestOptions = {
                 method: 'DELETE',
                 headers: {
