@@ -62,10 +62,10 @@
             </a>
         </li>
         <li>
-            <a href="" class="logout">
-                <i class='bx bx-log-out-circle' ></i>
-                <span class="text">Logout</span>
-            </a>
+            <a href="" class="logout" onclick="logout()">
+                    <i class='bx bx-log-out-circle' ></i>
+                    <span class="text">Logout</span>
+                </a>
         </li>
     </ul>
 </section>
@@ -351,8 +351,8 @@
 </script>
 <script>
         function logout(){
-            const loader = document.getElementById("preloader");
-            loader.style.display = "flex";
+            {#const loader = document.getElementById("preloader");#}
+            {#loader.style.display = "flex";#}
             const requestOptions = {
                 method: 'DELETE',
                 headers: {
