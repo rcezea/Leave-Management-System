@@ -124,6 +124,11 @@ def admin():
             "email": user.email,
             "password": "*************",
         }
+        applications = manager.admin_get_all_applications()
+        applications = sorted([convert_json(app) for app in applications],
+                              key=lambda x: ('pending', 'rejected', 'approved')
+                              .index(x['status'])
+                              )
         total, pending, approved, rejected = manager.get_stats()
         stats = {
             "total_leaves": total,
@@ -132,6 +137,6 @@ def admin():
             "rejected_leaves": rejected,
         }
         return render_template('dashboard/Admin.html',
-                               employee=employee, stats=stats)
+                               employee=employee, stats=stats, applications=applications)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

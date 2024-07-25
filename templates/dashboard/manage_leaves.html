@@ -93,6 +93,7 @@
                             <thead>
                                 <tr>
                                     <th>User</th>
+                                    <th>Type</th>
                                     <th>From Date</th>
                                     <th>To Date</th>
                                     <th>Days</th>
@@ -106,6 +107,7 @@
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ item.username }}</p>
                                     </td>
+                                    <td>{{ item.type }}</td>
                                     <td>{{ item.start }}</td>
                                     <td>{{ item.end }}</td>
                                     <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
@@ -126,6 +128,7 @@
                             <thead>
                                 <tr>
                                     <th>User</th>
+                                    <th>Type</th>
                                     <th>From Date</th>
                                     <th>To Date</th>
                                     <th>Days</th>
@@ -139,6 +142,7 @@
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ item.username }}</p>
                                     </td>
+                                    <td>{{ item.type }}</td>
                                     <td>{{ item.start }}</td>
                                     <td>{{ item.end }}</td>
                                     <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
@@ -159,6 +163,7 @@
                             <thead>
                                 <tr>
                                     <th>User</th>
+                                    <th>Type</th>
                                     <th>From Date</th>
                                     <th>To Date</th>
                                     <th>Days</th>
@@ -172,6 +177,7 @@
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ item.username }}</p>
                                     </td>
+                                    <td>{{ item.type }}</td>
                                     <td>{{ item.start }}</td>
                                     <td>{{ item.end }}</td>
                                     <td>{{ (datetime.strptime(item.end, '%Y-%m-%d').date() - datetime.strptime(item.start, '%Y-%m-%d').date()).days + 1 }}</td>
