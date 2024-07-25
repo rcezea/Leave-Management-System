@@ -123,8 +123,7 @@
                 <thead>
                     <tr>
                         <th>User</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
+                        <th>Reason</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -133,16 +132,15 @@
                         <tr>
                             <td>
                                 <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
-                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                                <p>{{ item.username }}</p>
                             </td>
-                            <td>{{ item.start }}</td>
-                            <td>{{ item.end }}</td>
+                            <td>{{ item.reason }}</td>
                             <td>
                                 <span class="status {% if item.status == 'pending' %}pending{% elif item.status == 'approved' %}approved{% elif item.status == 'rejected' %}rejected{% endif %}">
                                     {{ item.status.capitalize() }}
                                 </span>
                             </td>
-                    </tr>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
