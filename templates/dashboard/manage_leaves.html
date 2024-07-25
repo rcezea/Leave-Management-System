@@ -21,7 +21,7 @@
         <span class="text">Admin</span>
     </a>
     <ul class="side-menu top">
-        <li class="active">
+        <li>
             <a href="/admin/dashboard">
                 <i class='bx bxs-dashboard'></i>
                 <span class="text">Home</span>
@@ -39,7 +39,7 @@
                 <span class="text">Manage Employees</span>
             </a>
         </li>
-        <li>
+        <li class="active">
             <a href="/admin/leave-applications">
                 <i class='bx bxs-bar-chart-alt-2' ></i>
                 <span class="text">Manage Leave</span>
@@ -160,7 +160,7 @@
                             </thead>
                             <tbody>
                             {% for item in applications if item.status == 'pending' %}
-                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}">
+                                <tr class="application-row" data-status="{{ item.status }}" data-leave-id="{{ item["_id"] }}" data-reason="{{ item.reason }}">
                                     <td>
                                         <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
                                         <p>{{ item.username }}</p>
@@ -217,7 +217,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>Do you want to approve this pending leave request?</p>
+            <p id="leaveReason">Do you want to approve this pending leave request?</p>
             <button id="approveButton">Yes, approve</button>
             <button id="rejectButton">No, reject</button>
             <button id="closeButton">Cancel</button>
@@ -248,12 +248,15 @@
 
     // Variable to store the current leave_id
     var currentLeaveId = null;
+    var currentLeaveReason = null;
 
     // When the user clicks on a pending leave request, open the modal and store the leave_id
     document.querySelectorAll('.application-row').forEach(function(row) {
         row.addEventListener('click', function() {
             if (this.getAttribute('data-status') === 'pending') {
                 currentLeaveId = this.getAttribute('data-leave-id');
+                currentLeaveReason = this.getAttribute('data-reason');
+                document.getElementById("leaveReason").textContent = currentLeaveReason;
                 modal.style.display = "block";
             }
         });
