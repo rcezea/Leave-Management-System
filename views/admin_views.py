@@ -3,7 +3,10 @@
 admin_views.py
 Manager/Administrator Endpoints
 """
+import ast
 import json
+from datetime import datetime, date
+
 from views import app_views
 from flask import jsonify, abort, render_template
 from views.user_views import auth, role_required
@@ -15,8 +18,12 @@ def convert_json(application, user=False):
     application_dict = json.loads(application.to_json())
     application_dict['start'] = application.start.isoformat()
     application_dict['end'] = application.end.isoformat()
-    if user:
-        del application_dict['userid']
+    user_id = str(application_dict['userid'])
+    data_dict = ast.literal_eval(user_id.replace("'", "\""))
+    user_id = data_dict['$oid']
+    user = auth._db.find_user_by(id=user_id)
+    application_dict['username'] = f"{user.firstname} {user.lastname}"
+    del application_dict['userid']
     return application_dict
 
 
@@ -30,8 +37,12 @@ def admin_get_all_applications():
     """ View all leave applications """
     try:
         all_applications = manager.admin_get_all_applications()
-        applications_list = [convert_json(app) for app in all_applications]
-        return jsonify({"Applications": applications_list}), 200
+        applications_list = sorted([convert_json(app) for app in all_applications],
+                                   key=lambda x: ('pending', 'rejected', 'approved')
+                                   .index(x['status'])
+                                   )
+        return render_template('dashboard/manage_leaves.html',
+                               applications=applications_list, datetime=datetime, date=date)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -45,6 +56,8 @@ def admin_get_all_applications():
 def approve_leave(leave_id):
     """ Approve leave application """
     try:
+        data_dict = ast.literal_eval(leave_id.replace("'", "\""))
+        leave_id = data_dict['$oid']
         if manager.approve_leave_application(leave_id):
             return jsonify({"message": "Leave application approved"}), 200
         abort(400)
@@ -61,6 +74,8 @@ def approve_leave(leave_id):
 def reject_leave(leave_id):
     """ Reject leave application """
     try:
+        data_dict = ast.literal_eval(leave_id.replace("'", "\""))
+        leave_id = data_dict['$oid']
         if manager.reject_leave_application(leave_id):
             return jsonify({"message": "Leave application rejected"}), 200
         abort(400)
@@ -116,7 +131,7 @@ def admin():
             "approved_leaves": approved,
             "rejected_leaves": rejected,
         }
-        return render_template('dashboard/admin_dashboard.html',
+        return render_template('dashboard/Admin.html',
                                employee=employee, stats=stats)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

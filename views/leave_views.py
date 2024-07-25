@@ -91,7 +91,6 @@ def cancel_leave(leave_id):
     try:
         data_dict = ast.literal_eval(leave_id.replace("'", "\""))
         leave_id = data_dict['$oid']
-        print(leave_id)
         user = auth.__current_user
         if manager.delete_leave(user, leave_id):
             return jsonify({"message": "Application "
