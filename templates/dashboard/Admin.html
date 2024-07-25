@@ -19,7 +19,7 @@
 <section id="sidebar">
     <a href="#" class="brand">
         <i class='bx bxs-user'></i>
-        <span class="text">{{ employee.firstname }} {{ employee.lastname }}</span>
+        <span class="text">Admin</span>
     </a>
     <ul class="side-menu top">
         <li class="active">
@@ -123,50 +123,29 @@
                 <thead>
                     <tr>
                         <th>User</th>
-                        <th>Application Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="https://lh3.googleusercontent.com/ogw/AF2bZyi5GukKspULSakGvdFqTmDLPOWwAZGWaRdZ44JCUUCj960=s32-c-mo">
-                            <p>John Doe</p>
-                        </td>
-                        <td>01-10-2021</td>
-                        <td><span class="status completed">Pending</span></td>
+                    {% for item in applications %}
+                        <tr>
+                            <td>
+                                <img src="https://images.pexels.com/photos/10850674/pexels-photo-10850674.jpeg?cs=srgb&dl=pexels-abel-kayode-155872537-10850674.jpg&fm=jpg&w=640&h=640">
+                                <p>{{ employee.firstname }} {{ employee.lastname }}</p>
+                            </td>
+                            <td>{{ item.start }}</td>
+                            <td>{{ item.end }}</td>
+                            <td>
+                                <span class="status {% if item.status == 'pending' %}pending{% elif item.status == 'approved' %}approved{% elif item.status == 'rejected' %}rejected{% endif %}">
+                                    {{ item.status.capitalize() }}
+                                </span>
+                            </td>
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
-        </div>
-        <div class="todo">
-            <div class="head">
-                <h3>Todos</h3>
-                <i class='bx bx-plus' ></i>
-                <i class='bx bx-filter' ></i>
-            </div>
-            <ul class="todo-list">
-                <li class="completed">
-                    <p>Todo List</p>
-                    <i class='bx bx-dots-vertical-rounded' ></i>
-                </li>
-                <li class="completed">
-                    <p>Todo List</p>
-                    <i class='bx bx-dots-vertical-rounded' ></i>
-                </li>
-                <li class="not-completed">
-                    <p>Todo List</p>
-                    <i class='bx bx-dots-vertical-rounded' ></i>
-                </li>
-                <li class="completed">
-                    <p>Todo List</p>
-                    <i class='bx bx-dots-vertical-rounded' ></i>
-                </li>
-                <li class="not-completed">
-                    <p>Todo List</p>
-                    <i class='bx bx-dots-vertical-rounded' ></i>
-                </li>
-            </ul>
         </div>
     </div>
 </main>

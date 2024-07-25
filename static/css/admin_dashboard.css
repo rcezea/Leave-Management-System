@@ -481,13 +481,13 @@ body {
 	border-radius: 20px;
 	font-weight: 700;
 }
-#content main .table-data .order table tr td .status.completed {
+#content main .table-data .order table tr td .status.pending {
 	background: var(--blue);
 }
-#content main .table-data .order table tr td .status.process {
+#content main .table-data .order table tr td .status.approved {
 	background: var(--yellow);
 }
-#content main .table-data .order table tr td .status.pending {
+#content main .table-data .order table tr td .status.rejected {
 	background: var(--orange);
 }
 
@@ -512,10 +512,10 @@ body {
 #content main .table-data .todo .todo-list li .bx {
 	cursor: pointer;
 }
-#content main .table-data .todo .todo-list li.completed {
+#content main .table-data .todo .todo-list li.pending {
 	border-left: 10px solid var(--blue);
 }
-#content main .table-data .todo .todo-list li.not-completed {
+#content main .table-data .todo .todo-list li.not-pending {
 	border-left: 10px solid var(--orange);
 }
 #content main .table-data .todo .todo-list li:last-child {
