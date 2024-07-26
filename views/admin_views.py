@@ -125,10 +125,7 @@ def admin():
             "password": "*************",
         }
         applications = manager.admin_get_all_applications()
-        applications = sorted([convert_json(app) for app in applications],
-                              key=lambda x: ('pending', 'rejected', 'approved')
-                              .index(x['status'])
-                              )
+        applications = [convert_json(app) for app in applications]
         total, pending, approved, rejected = manager.get_stats()
         stats = {
             "total_leaves": total,
@@ -136,6 +133,7 @@ def admin():
             "approved_leaves": approved,
             "rejected_leaves": rejected,
         }
+        applications = applications[0:7]
         return render_template('dashboard/Admin.html',
                                employee=employee, stats=stats, applications=applications)
     except Exception as e:
