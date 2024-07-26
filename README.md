@@ -14,12 +14,12 @@ The Leave Management System is a comprehensive web-based application developed a
 ## Project Leads
 
 * Richard Ezea - Full Stack Developer - Abuja (Nigeria)
-* Misati Nyambane - Frontend Developer
+* Misati Nyambane - Frontend Developer - Nairobi (Kenya)
 
 ## Developers
 
 * Richard Ezea - Backend Developer - Abuja (Nigeria)
-* Misati Nyambane - Frontend Developer
+* Misati Nyambane - Frontend Developer - Nairobi (Kenya)
 * Adeniran Oluwaseun - Frontend Developer
 
 ## Special Thanks To
